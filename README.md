@@ -51,4 +51,4 @@ file to generate the complete set of RADMC-3D input files for your chosen parame
 After running RADMC-3D on these files, the `radmc_image_processing.py` script can be used
 to generate the moment 0, 1, and 2 maps of the output image file.
 
-For more complete instructions, see the [full documentation](https://github.com/seafen7/gizmo_carver/tree/main/default_files).
+For more complete instructions, see the [full documentation](https://github.com/seafen7/gizmo_carver/blob/dev/doc/FULL_DOC.md).
