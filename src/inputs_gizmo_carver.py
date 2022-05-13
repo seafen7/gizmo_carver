@@ -1,5 +1,5 @@
 """
-   imputs_gizmo_carver.py
+   inputs_gizmo_carver.py
 
    Purpose:
         Input file for RadMC carving routines. This is the only file you should
@@ -63,8 +63,12 @@ unit_base = {'UnitMagneticField_in_gauss':  1e+4,
 # radmc3d.inp
 # wavelength_micron.inp
 #
-# Must give as a raw string (just put r in front of the string)
-existing_filepath = r'C:\Users\seany\Documents\Offner Research\RADMC_test\default_files'
+# Give as a raw string (just put r in front of the string)
+existing_filepath = '..\default_files'
+
+# Filepath for storing output files. Routine will make a working directory within this
+# output directory for each run.
+output_filepath = '..\output_files'
 
 # Output file names for use in RADMC3D
 out_afname = "amr_grid.inp"       # output file name for amr grid

@@ -2,7 +2,7 @@
    main_gizmo_carver.py
 
    Purpose:
-        Driver for NH3-based RADMC carve routines. Call this file when you want
+        Driver file for NH3-based RADMC carve routines. Call this file when you want
         to run the code. Should not ever need to edit this file.
 
    Author:
@@ -74,7 +74,7 @@ now = datetime.now()
 dt_string = now.strftime("%m.%d.%y_%H'%M'%S")
 
 # Create working directory for this run
-current_dir = os.getcwd()
+current_dir = inputs.output_filepath
 working_dir_name = os.path.join(current_dir, 'RADMC_inputs_' + dt_string)
 os.mkdir(working_dir_name)
 
