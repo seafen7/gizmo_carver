@@ -1,5 +1,21 @@
-import numpy as np
-import sys
+"""
+   globals_gizmo_carver.py
+
+   Purpose:
+        Constants and simple functions for use in the RadMC carving routines.
+        Should not need to edit this file.
+
+   Author:
+        Sean Feng, feng.sean01@utexas.edu
+        Spring 2022
+        
+        Modified from:
+        globals_CarveOut.py, written by:
+        Aaron T. Lee, aaron.t.lee@utexas.edu
+        Spring 2018
+
+   Written/Tested with Python 3.9, yt 4.0.2
+"""
 
 # Unit conversions
 class UnitConv:
@@ -22,7 +38,7 @@ class UnitConv:
 #         cgsunit = fundamental cgs unit (e.g., 'g' if mass, 'cm' if length)
 def Convert(x,unit_in,unit_out,cgsunit):
     if cgsunit not in UnitConv.cgsunits:
-        Messages.Calamity("Unit conversion failure for cgs unit: " + str(cgsunit))
+        print("Unit conversion failure for cgs unit: " + str(cgsunit))
 
     if(cgsunit=='cm'):
         possible_units = UnitConv.lenunits
@@ -33,7 +49,7 @@ def Convert(x,unit_in,unit_out,cgsunit):
 
     units = [ unit_in.lower(), unit_out.lower()]
     if False in [x in possible_units for x in units]:
-        Messages.Calamity("Unit conversion failure for units: " + str(unit_in) + " and " + str(unit_out))
+        print("Unit conversion failure for units: " + str(unit_in) + " and " + str(unit_out))
 
     # Convert first to CGS
     val1 = 1.0

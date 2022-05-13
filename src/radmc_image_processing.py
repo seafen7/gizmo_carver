@@ -1,3 +1,17 @@
+"""
+   radmc_image_processing.py
+
+   Purpose:
+        Contains functions for plotting RADMC-3D output image files using MatPlotLib.
+        Edit this file to create custom plotting routines.
+
+   Author:
+        Sean Feng, feng.sean01@utexas.edu
+        Spring 2022
+
+   Written/Tested with Python 3.9, radmc3dpy 0.30.2
+"""
+
 from radmc3dPy import *
 import matplotlib.pylab as plb
 import numpy as np

@@ -1,3 +1,22 @@
+"""
+   writer_gizmo_carver.py
+
+   Purpose:
+        Writer class that compresses the relevant layers needed to create  
+        RADMC amr, number density, line, and dust files. Should not need to edit
+        this file.
+
+   Author:
+        Sean Feng, feng.sean01@utexas.edu
+        Spring 2022
+        
+        Modified from: carver_CarveOut.py, written by:
+        Aaron T. Lee, aaron.t.lee@utexas.edu
+        Spring 2018
+
+   Written/Tested with Python 3.9, yt 4.0.2
+"""
+
 import numpy as np
 import yt
 from yt.utilities.lib.write_array import write_3D_array, write_3D_vector_array # same as carver_CarveOut
@@ -62,7 +81,7 @@ class RadMC3DWriter_Gizmo:
         #         self._add_grid_to_layers(grid)
         
         
-    # From CarveOut
+    # From carver_CarveOut.py
     def write_amr_grid(self, filename):
         '''
         This routine writes the "amr_grid.inp" file that describes the mesh
@@ -165,9 +184,9 @@ class RadMC3DWriter_Gizmo:
             grid_file.write(s)
     
         grid_file.close()
-        #print("Cell count post AMR : " + str(CellCount))
         
         
+    # Custom covering_grid function
     def _covering_grid(self, ds):
         le = self.boxLeft
         re = self.boxRight

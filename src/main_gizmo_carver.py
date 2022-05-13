@@ -1,3 +1,21 @@
+"""
+   main_gizmo_carver.py
+
+   Purpose:
+        Driver for NH3-based RADMC carve routines. Call this file when you want
+        to run the code. Should not ever need to edit this file.
+
+   Author:
+        Sean Feng, feng.sean01@utexas.edu
+        Spring 2022
+        
+        Modified from: main_CarveOut.py, written by:
+        Aaron T. Lee, aaron.t.lee@utexas.edu
+        Spring 2018
+
+   Written/Tested with Python 3.9, yt 4.0.2
+"""
+
 import yt
 from writer_gizmo_carver import RadMC3DWriter_Gizmo
 from globals_gizmo_carver import *
@@ -8,10 +26,12 @@ from datetime import datetime
 import shutil
 import numpy as np
 
+# Definition of the dust field. Uses dust to gas ratio from inputs file
 def _DustDensity(field, data):
     return inputs.dust_to_gas * data[('PartType0', 'Density')]
 yt.add_field(('PartType0', 'DustDensity'), function=_DustDensity, units='g/cm**3', sampling_type='particle', force_override=True)
 
+# Definition of the NH3 species field. Uses info from inputs
 def _AmmoniaNumDensity(field, data):
     return data[('PartType0', 'Density')]*data[('PartType0', 'MolecularMassFraction')]/(inputs.hydrogen_ratio*mh)*inputs.ammonia_abundance
 yt.add_field(('PartType0', 'AmmoniaNumDensity'), function=_AmmoniaNumDensity, units='cm**-3', sampling_type='particle', force_override=True)
@@ -26,10 +46,10 @@ def _MicroTurb(field, data):
     return turb
 yt.add_field(("PartType0", "microturbulence_speed"), function=_MicroTurb, units="cm/s", sampling_type='particle', force_override=True)
 
+# Definition of the gas temperature. Uses info from inputs
 def _gas_temp(field, data):
-    helium_mass_fraction = 0.24 #Default mass fraction in Gizmo
-    y_helium = helium_mass_fraction/(4.0*(1-helium_mass_fraction))
-    mu = (1+4.0*y_helium)/(1+y_helium) #Here electron abundance <10^-5
+    y_helium = inputs.helium_mass_fraction/(4.0*(1-inputs.helium_mass_fraction))
+    mu = (1+4.0*y_helium)/(1+y_helium) # Here electron abundance < 10^-5
     # print(‘const =’, mu, gamma, mh, kboltz, (mu*mh*(gamma-1))/kboltz)
     #mu = (1+4.0*y_helium)/(1+y_helium+data[(‘PartType0’,‘ElectronAbundance’)]
     #const = ((1.2*mh.in_mks()*(gamma-1))/kboltz.in_mks())

@@ -1,3 +1,22 @@
+"""
+   imputs_gizmo_carver.py
+
+   Purpose:
+        Input file for RadMC carving routines. This is the only file you should
+        edit. Follow the comments below to see what each variable represents.
+
+   Author:
+        Sean Feng, feng.sean01@utexas.edu
+        Spring 2022
+        
+        Modified from:
+        inputs_CarveOut.py, written by
+        Aaron T. Lee, aaron.t.lee@utexas.edu
+        Spring 2018
+
+   Written/Tested with Python 3.9, yt 4.0.2
+"""
+
 from yt.units import * 
 
 # Constants for calculating derived fields
@@ -7,6 +26,8 @@ ammonia_abundance = 10**-7
 hydrogen_ratio = 2.33
 microturbulence_speed = 1000 # cgs
 gamma = 5.0/3.0 # Note gamma is not constant and this function is an approximation.
+helium_mass_fraction = 0.24 # Default mass fraction in Gizmo
+
 
 # Units of the below box values ('pc','cm','AU','ly' accepted)
 box_units = 'pc'
