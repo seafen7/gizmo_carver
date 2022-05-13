@@ -44,8 +44,10 @@ box_size = 0.1 # pc
 # box_dim = 64j, the resulting image will be 64x64)
 box_dim = 64j
 
-# HDF5 file name to read in
-hdf5_file = 'M2e3_mid.hdf5'
+# Filepath of the HDF5 file name to read in
+# If the HDF5 file is located in the same directory as the script files, 
+# you can just put the file name
+hdf5_file = '..\M2e3_mid.hdf5'
 
 # unit base to use for calculations
 unit_base = {'UnitMagneticField_in_gauss':  1e+4,
@@ -62,8 +64,6 @@ unit_base = {'UnitMagneticField_in_gauss':  1e+4,
 # molecule_nh3.inp
 # radmc3d.inp
 # wavelength_micron.inp
-#
-# Give as a raw string (just put r in front of the string)
 existing_filepath = '..\default_files'
 
 # Filepath for storing output files. Routine will make a working directory within this

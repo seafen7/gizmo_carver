@@ -3,7 +3,8 @@
 [![Python](https://img.shields.io/badge/python-3.9-blue)](https://www.python.org/downloads/)
 [![yt](https://img.shields.io/badge/yt-4.0.2-blue)](https://yt-project.org/)
 
-Python scripts for generating synthetic observations using yt and RADMC-3D
+Python scripts for generating synthetic observations from a GIZMO dataset
+using yt and RADMC-3D
 
 ## File Contents
 
@@ -43,8 +44,11 @@ these files may be needed for certain observation parameters.
 ## Getting Started
 
 After cloning this repo to your local machine, modify the `inputs_gizmo_carver.py` file
-to match the desired input and output parameters. Then, simply run the `main_gizmo_carver.py` 
+to match the desired input and output parameters. Also ensure that the GIZMO dataset file
+is present within the working directory. Then, simply run the `main_gizmo_carver.py` 
 file to generate the complete set of RADMC-3D input files for your chosen parameters. 
 
 After running RADMC-3D on these files, the `radmc_image_processing.py` script can be used
-to generate the moment 0, 1, 2 maps of the output image file.
+to generate the moment 0, 1, and 2 maps of the output image file.
+
+For more complete instructions, see the [full documentation](https://github.com/seafen7/gizmo_carver/tree/main/default_files).
