@@ -110,7 +110,7 @@ plot moment maps. See the comments in `radmc_image_processing.py` for more infor
         
 ## Dependencies
 
-This carving routine was written and tested with the following module versions:
+This carving routine was written and tested with the following package versions (See requirements.txt):
 
 | Package       | Version       |
 | ------------- |:-------------:|
@@ -119,5 +119,3 @@ This carving routine was written and tested with the following module versions:
 | numpy         | 1.20.3        |
 | radmc3dPy     | 0.30.2        |
 | matplotlib    | 3.5.0         |
-
-
