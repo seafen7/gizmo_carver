@@ -20,7 +20,7 @@ used to plot the moment 0, 1, and 2 maps of a RADMC-3D output image file.
 The graphic below shows the high-level prodecure for running the pipeline (steps 
 involving the repo files are shown in blue):
 
-<p align="center"><img src="https://github.com/seafen7/gizmo_carver/blob/dev/doc/_static/pipeline_workflow.jpg?raw=true" alt="Pipeline workflow diagram"></p>
+<p align="center"><img src="https://github.com/seafen7/gizmo_carver/blob/main/doc/_static/pipeline_workflow.jpg?raw=true" alt="Pipeline workflow diagram"></p>
 
 ## File Contents
 
