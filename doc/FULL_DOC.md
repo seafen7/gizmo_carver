@@ -87,8 +87,8 @@ these files may be needed for certain observation parameters.
         radmc3d.inp
         wavelength_micron.inp
         ```
-    iv. Update the `output_filepath` parameter with the filepath of the output directory
-    created earlier.
+    1. Update the `output_filepath` parameter with the filepath of the output directory
+    mentioned earlier.
     
 1. After the `inputs_gizmo_carver.py` file has been fully updated, run the 
 `main_gizmo_carver.py` script to generate the input files. These files will be generated
