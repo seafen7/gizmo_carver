@@ -2,6 +2,9 @@
 
 [![Python](https://img.shields.io/badge/python-3.9-blue)](https://www.python.org/downloads/)
 [![yt](https://img.shields.io/badge/yt-4.0.2-blue)](https://yt-project.org/)
+[![radmc3dPy](https://img.shields.io/badge/radmc3dPy-0.30.2-blue)](https://www.ita.uni-heidelberg.de/~dullemond/software/radmc-3d/manual_rmcpy/index.html)
+[![matplotlib](https://img.shields.io/badge/matplotlib-3.5.0-blue)](https://matplotlib.org/)
+[![numpy](https://img.shields.io/badge/numpy-4.0.2-blue)](https://numpy.org/)
 
 Python scripts for generating synthetic observations from a GIZMO dataset
 using yt and RADMC-3D
@@ -51,4 +54,4 @@ file to generate the complete set of RADMC-3D input files for your chosen parame
 After running RADMC-3D on these files, the `radmc_image_processing.py` script can be used
 to generate the moment 0, 1, and 2 maps of the output image file.
 
-For more complete instructions, see the [full documentation](https://github.com/seafen7/gizmo_carver/tree/main/default_files).
+For more complete instructions, see the [full documentation](https://github.com/seafen7/gizmo_carver/blob/dev/doc/FULL_DOC.md).
