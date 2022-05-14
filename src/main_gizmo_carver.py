@@ -80,13 +80,17 @@ os.mkdir(working_dir_name)
 
 box_left = np.add(inputs.box_center, -inputs.box_size)
 box_right = np.add(inputs.box_center, inputs.box_size)
-box_left = [Convert(x, inputs.box_units, 'cm', 'cm') for x in box_left]
-box_right = [Convert(x, inputs.box_units, 'cm', 'cm') for x in box_right]
+box_left_cgs = [Convert(x, inputs.box_units, 'cm', 'cm') for x in box_left]
+box_right_cgs = [Convert(x, inputs.box_units, 'cm', 'cm') for x in box_right]
 
-box_left = unyt_array(box_left, 'cm')
-box_right = unyt_array(box_right, 'cm')
+box_left_cgs = unyt_array(box_left, 'cm')
+box_right_cgs = unyt_array(box_right, 'cm')
 
-writer = RadMC3DWriter_Gizmo(ds, a_boxLeft=box_left, a_boxRight=box_right, a_boxDim=inputs.box_dim)
+print("\nCarving between Left = " + str(unyt_array(box_left, inputs.box_units)))
+print("            to Right = " + str(unyt_array(box_right, inputs.box_units)))
+print("       w/ Resolution = " + str(abs(inputs.box_dim)) + " x " + str(abs(inputs.box_dim)) + "\n")
+
+writer = RadMC3DWriter_Gizmo(ds, a_boxLeft=box_left_cgs, a_boxRight=box_right_cgs, a_boxDim=inputs.box_dim)
 
 # Write the amr grid file (fast)
 print("1/7: Writing amr grid file (fast!)")

@@ -38,6 +38,7 @@ box_center = [15.95957649, 15.54566532, 15.19446488]
 
 # Routine will generate input files for a square area centered at box_center 
 # extending to box_center += box_size on each side
+# Use same units as box_units
 box_size = 0.1 # pc
 
 # Resolution of the resulting image (give as a complex number, e.g. for 
