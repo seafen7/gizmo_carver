@@ -31,10 +31,10 @@ def _DustDensity(field, data):
     return inputs.dust_to_gas * data[('PartType0', 'Density')]
 yt.add_field(('PartType0', 'DustDensity'), function=_DustDensity, units='g/cm**3', sampling_type='particle', force_override=True)
 
-# Definition of the NH3 species field. Uses info from inputs
-def _AmmoniaNumDensity(field, data):
-    return data[('PartType0', 'Density')]*data[('PartType0', 'MolecularMassFraction')]/(inputs.hydrogen_ratio*mh)*inputs.ammonia_abundance
-yt.add_field(('PartType0', 'AmmoniaNumDensity'), function=_AmmoniaNumDensity, units='cm**-3', sampling_type='particle', force_override=True)
+# Definition of the target species field. Uses info from inputs
+def _MolecularNumDensity(field, data):
+    return data[('PartType0', 'Density')]*data[('PartType0', 'MolecularMassFraction')]/(inputs.hydrogen_ratio*mh)*inputs.molecular_abundance
+yt.add_field(('PartType0', 'MolecularNumDensity'), function=_MolecularNumDensity, units='cm**-3', sampling_type='particle', force_override=True)
 
 # Definition of the microturbulence at each point. Uses info from inputs
 def _MicroTurb(field, data):

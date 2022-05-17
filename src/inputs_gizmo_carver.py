@@ -21,13 +21,13 @@ from yt.units import *
 
 # Constants for calculating derived fields
 dust_to_gas = 0.01
-m_ammonia = mh*17 # mass of hydrogen * 17
-ammonia_abundance = 10**-7
 hydrogen_ratio = 2.33
 microturbulence_speed = 1000 # cgs
 gamma = 5.0/3.0 # Note gamma is not constant and this function is an approximation.
 helium_mass_fraction = 0.24 # Default mass fraction in Gizmo
 
+# number fraction of target species
+molecular_abundance = 10**-7 # abundance of NH3
 
 # Units of the below box values ('pc','cm','AU','ly' accepted)
 box_units = 'pc'
