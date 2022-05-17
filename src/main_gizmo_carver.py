@@ -2,7 +2,7 @@
    main_gizmo_carver.py
 
    Purpose:
-        Driver file for NH3-based RADMC carve routines. Call this file when you want
+        Driver file for RADMC carve routines. Call this file when you want
         to run the code. Should not ever need to edit this file.
 
    Author:
@@ -98,7 +98,7 @@ writer.write_amr_grid(os.path.join(working_dir_name, inputs.out_afname))
 
 # Write the number density file for species (slow)
 print("2/7: Writing number density file (slow.)")
-writer.write_line_file(('PartType0', 'AmmoniaNumDensity'), os.path.join(working_dir_name, inputs.out_nfname))
+writer.write_line_file(('PartType0', 'MolecularNumDensity'), os.path.join(working_dir_name, inputs.out_nfname))
 
 # Write the dust density file for dust (slow)
 print("3/7: Writing dust density file (slow.)")

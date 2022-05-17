@@ -62,7 +62,7 @@ unit_base = {'UnitMagneticField_in_gauss':  1e+4,
 # dustkappa_silicate.inp
 # dustopac.inp
 # lines.inp
-# molecule_nh3.inp
+# molecule_nh3.inp (Or data file for other target species)
 # radmc3d.inp
 # wavelength_micron.inp
 existing_filepath = '..\default_files'
@@ -73,7 +73,7 @@ output_filepath = '..\output_files'
 
 # Output file names for use in RADMC3D
 out_afname = "amr_grid.inp"       # output file name for amr grid
-out_nfname = "numberdens_nh3.inp" # output file name for species XYZ above
+out_nfname = "numberdens_nh3.inp" # output file name for target species above
 out_vfname = "gas_velocity.inp"   # output file name for velocity
 out_tfname = "gas_temperature.inp"    # output file name for temperature
 out_ddfname = "dust_density.inp" # output file name for dust density
@@ -81,7 +81,7 @@ out_dtfname = "dust_temperature.dat" # output for dust temperature (requires .da
 out_mtfname = "microturbulence.inp" # output for microturbulence
 
 # Names of existing files
-out_molname = 'molecule_nh3.inp'
+out_molname = 'molecule_nh3.inp' # (Or data file for other target species)
 out_wlmname = 'wavelength_micron.inp'
 out_cwlname = 'camera_wavelength_micron.inp'
 out_dksname = 'dustkappa_silicate.inp'

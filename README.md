@@ -13,17 +13,17 @@ using yt and RADMC-3D
 
 ### globals_gizmo_carver.py
 
-Contains constants and simple functions for use in the RadMC carving routines.
+Contains constants and simple functions for use in the RADMC-3D carving routines.
 Should not need to edit this file.
 
 ### inputs_gizmo_carver.py
 
-Input file containing constants and parameters for RadMC carving routines. 
+Input file containing constants and parameters for RADMC-3D carving routines. 
 This is the only file that requires editing during general use. 
 
 ### main_gizmo_carver.py
 
-Driver file for NH3-based RADMC carve routines. Generates necessary input files 
+Driver file for RADMC carve routines. Generates necessary input files 
 for RADMC-3D. Call this file to run the routine. Should not need to edit this file.
 
 ### writer_gizmo_carver.py
