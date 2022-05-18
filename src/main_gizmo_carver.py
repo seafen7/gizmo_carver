@@ -83,8 +83,8 @@ box_right = np.add(inputs.box_center, inputs.box_size)
 box_left_cgs = [Convert(x, inputs.box_units, 'cm', 'cm') for x in box_left]
 box_right_cgs = [Convert(x, inputs.box_units, 'cm', 'cm') for x in box_right]
 
-box_left_cgs = unyt_array(box_left, 'cm')
-box_right_cgs = unyt_array(box_right, 'cm')
+box_left_cgs = unyt_array(box_left_cgs, 'cm')
+box_right_cgs = unyt_array(box_right_cgs, 'cm')
 
 print("\nCarving between Left = " + str(unyt_array(box_left, inputs.box_units)))
 print("            to Right = " + str(unyt_array(box_right, inputs.box_units)))
@@ -130,4 +130,4 @@ shutil.copy(os.path.join(inputs.existing_filepath, inputs.out_dtpname), working_
 shutil.copy(os.path.join(inputs.existing_filepath, inputs.out_linname), working_dir_name)
 shutil.copy(os.path.join(inputs.existing_filepath, inputs.out_rmcname), working_dir_name)
 
-print('Done! Output files generated at: \n\n' + working_dir_name)
+print('Done! Output files generated at: \n\n' + os.path.abspath(working_dir_name))
