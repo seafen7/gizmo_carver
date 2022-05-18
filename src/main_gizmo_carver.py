@@ -86,8 +86,8 @@ box_right_cgs = [Convert(x, inputs.box_units, 'cm', 'cm') for x in box_right]
 box_left_cgs = unyt_array(box_left_cgs, 'cm')
 box_right_cgs = unyt_array(box_right_cgs, 'cm')
 
-print("\nCarving between Left = " + str(unyt_array(box_left, inputs.box_units)))
-print("            to Right = " + str(unyt_array(box_right, inputs.box_units)))
+print("\nCarving between Left = " + str(box_left_cgs))
+print("            to Right = " + str(box_right_cgs))
 print("       w/ Resolution = " + str(abs(inputs.box_dim)) + " x " + str(abs(inputs.box_dim)) + "\n")
 
 writer = RadMC3DWriter_Gizmo(ds, a_boxLeft=box_left_cgs, a_boxRight=box_right_cgs, a_boxDim=inputs.box_dim)
