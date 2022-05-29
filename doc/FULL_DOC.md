@@ -13,6 +13,9 @@ a section of a given dataset to produce synthetic observations of that section.
 
 The repo also contains the `radmc_image_processing.py` script, which can be 
 used to plot the moment 0, 1, and 2 maps of a RADMC-3D output image file.
+For handeling the image.out file there is a replacement image.py file for the 
+radmc3dPy tools set, which fixes a velocity bug that produced negative moment maps 
+and allows for plotting in units of brightness temperature.
 
 ## Pipeline Overview
 
