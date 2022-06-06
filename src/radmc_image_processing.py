@@ -71,5 +71,5 @@ def plotMomentMaps(moments=[0, 1, 2], imgPath=None, savePath=None, vclip=None, c
 
 
 
-vclip = [[0.1, 20], [-2, 2], [0.1, 10]]
+vclip = [[0.1, 20], [-2, 2], [0.1, 5]]
 plotMomentMaps(moments=[0,1,2], imgPath=r'./', vclip=vclip)
