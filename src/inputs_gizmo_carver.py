@@ -21,34 +21,35 @@ from yt.units import *
 
 # Constants for calculating derived fields
 dust_to_gas = 0.01
-hydrogen_ratio = 2.33
-microturbulence_speed = 1000 # cgs
+mol_hydrogen_ratio = 2.0
+microturbulence_speed = 1e4 # cgs
 gamma = 5.0/3.0 # Note gamma is not constant and this function is an approximation.
-helium_mass_fraction = 0.24 # Default mass fraction in Gizmo
+helium_mass_fraction = 0.284 # Default mass fraction in Gizmo
 
 # number fraction of target species
-molecular_abundance = 10**-7 # abundance of NH3
+molecular_abundance = 10**-8 # abundance of NH3 relative to H2
 
 # Units of the below box values ('pc','cm','AU','ly' accepted)
 box_units = 'pc'
 
 # x, y, z coordinates for the center of the carved domain (e.g., location of a star core)
 # The values should match the unit given by box_units
-box_center = [15.95957649, 15.54566532, 15.19446488]
+#box_center = [15.95957649, 15.54566532, 15.19446488]
+box_center = [15.0, 15.0, 15.0]
 
 # Routine will generate input files for a square area centered at box_center 
 # extending to box_center += box_size on each side
 # Use same units as box_units
-box_size = 0.1 # pc
+box_size = 2.5 # pc
 
 # Resolution of the resulting image (give as a complex number, e.g. for 
 # box_dim = 64j, the resulting image will be 64x64)
-box_dim = 64j
+box_dim = 256j
 
 # Filepath of the HDF5 file name to read in
 # If the HDF5 file is located in the same directory as the script files, 
 # you can just put the file name
-hdf5_file = '..\M2e3_mid.hdf5'
+hdf5_file = './M2e3_mid.hdf5'
 
 # unit base to use for calculations
 unit_base = {'UnitMagneticField_in_gauss':  1e+4,
@@ -65,11 +66,11 @@ unit_base = {'UnitMagneticField_in_gauss':  1e+4,
 # molecule_nh3.inp (Or data file for other target species)
 # radmc3d.inp
 # wavelength_micron.inp
-existing_filepath = '..\default_files'
+existing_filepath = '/home1/00653/tg458122/gizmo_carver/default_files'
 
 # Filepath for storing output files. Routine will make a working directory within this
 # output directory for each run.
-output_filepath = '..\output_files'
+output_filepath = './output_files'
 
 # Output file names for use in RADMC3D
 out_afname = "amr_grid.inp"       # output file name for amr grid
