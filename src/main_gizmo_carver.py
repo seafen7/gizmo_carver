@@ -33,7 +33,7 @@ yt.add_field(('PartType0', 'DustDensity'), function=_DustDensity, units='g/cm**3
 
 # Definition of the target species field. Uses info from inputs
 def _MolecularNumDensity(field, data):
-    return data[('PartType0', 'Density')]*data[('PartType0', 'MolecularMassFraction')]/(inputs.hydrogen_ratio*mh)*inputs.molecular_abundance
+    return data[('PartType0', 'Density')]*data[('PartType0', 'MolecularMassFraction')]*data[('PartType0', 'NeutralHydrogenAbundance')]*(1-inputs.helium_mass_fraction)/(inputs.mol_hydrogen_ratio*mh)*inputs.molecular_abundance
 yt.add_field(('PartType0', 'MolecularNumDensity'), function=_MolecularNumDensity, units='cm**-3', sampling_type='particle', force_override=True)
 
 # Definition of the microturbulence at each point. Uses info from inputs
@@ -53,7 +53,10 @@ def _gas_temp(field, data):
     # print(‘const =’, mu, gamma, mh, kboltz, (mu*mh*(gamma-1))/kboltz)
     #mu = (1+4.0*y_helium)/(1+y_helium+data[(‘PartType0’,‘ElectronAbundance’)]
     #const = ((1.2*mh.in_mks()*(gamma-1))/kboltz.in_mks())
-    return (data[('PartType0','InternalEnergy')]*((mu*mh.in_mks()*(inputs.gamma-1))/(1e6*kboltz.in_mks())))
+    const = (mu*mh.in_mks()*(inputs.gamma-1))/(1e6*kboltz.in_mks())
+    # Note the temperature tables are limited to 1e5K
+    return (data[('PartType0','InternalEnergy')]*const * ( data[('PartType0','InternalEnergy')] < yt.YTArray([9e4], "K")/const))
+
 yt.add_field(("PartType0", "gas_temperature"), function=_gas_temp, units="K", sampling_type='particle', force_override=True)
 
 # Definition of the dust temperature. Assumes same as gas for now
@@ -68,7 +71,6 @@ try:
     print("Loaded file " + str(ds)) # using classic print() for try/except to work
 except NameError:
     assert False, "Unable to properly load file into YT!"
-
 
 now = datetime.now()
 dt_string = now.strftime("%m.%d.%y_%H'%M'%S")
@@ -109,6 +111,7 @@ writer.write_line_file(("PartType0", "microturbulence_speed"), os.path.join(work
 
 # Write the temperature file for species or dust (slow)
 print("5/7: Writing temperature file (slower..)")
+print(ds.find_max(("PartType0","gas_temperature")))
 writer.write_line_file(("PartType0", "gas_temperature"), os.path.join(working_dir_name, inputs.out_tfname))
 
 # Assuming dust temperature is same as gas for now...
