@@ -30,6 +30,7 @@ fac = 1 # Test / Prefactor for NH3 abundance
 plot_mol = True
 plot_temp = True
 plot_dust = False
+save = True     # Save plots
 
 # Read input data used for RADMC calculation
 data = analyze.readData(gdens=True,ddens=plot_dust,ispec='nh3', gtemp=plot_temp)
@@ -55,7 +56,10 @@ if plot_mol:
     ax.hist(np.ravel(Nh2x*molecular_abundance), bins=np.logspace(np.log10(1e10),np.log10(2e15), 25))
     ax.set_xscale("log")
     ax.set(xlabel='N$_{NH3}$ [cm$^2$/g] ', ylabel=' N')
-    plt.show()
+    if save == True:
+        plt.savefig("ColNH3_dist_check.png")
+    else:
+        plt.show()
 
     # Plot effective NH3 abundance (as compared to dust, where we assume the dust traces the molecular gas)
     if plot_dust == True:
@@ -65,7 +69,10 @@ if plot_mol:
         ax.hist(np.ravel(nh2*molecular_abundance*fac/nh2eff), bins=np.logspace(np.log10(1e-10),np.log10(2e-7), 25))
         ax.set_xscale("log")
         ax.set(xlabel='X$_{NH3}$ [cm$^2$/g] ', ylabel=' N')
-        plt.show()
+        if save == True:
+            plt.savefig("X_NH3_dist_in.png")
+        else:
+            plt.show()
 
 
     # Plot Column Density maps
@@ -80,7 +87,10 @@ if plot_mol:
     ax[0].set(xlabel='L [pc] ', ylabel='L [pc]')
     ax[1].set(title='H$_2$ Column Density')
 
-    plt.show()
+    if save == True:
+        plt.savefig("ColH2_dist.png")
+    else:
+        plt.show()
     print("Max Nh2", np.max(Nh2x), np.max(Nh2y), np.max(Nh2z))
 
 
@@ -91,4 +101,7 @@ if plot_temp:
     ax.hist(np.ravel(data.gastemp), bins=np.logspace(np.log10(1e0),np.log10(1e5), 20))
     ax.set_xscale("log")
     ax.set(xlabel='T [K]', ylabel=' N')
-    plt.show()
+    if save == True:
+        plt.savefig("Gastemp_dist_in.png")
+    else:
+        plt.show()
