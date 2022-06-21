@@ -20,10 +20,11 @@ import os
 dust_to_gas = 0.01 # dust to gas ratio
 hydrogen_ratio = 1.4 # nH/nHe = 10
 helium_mass_fraction = 0.284
-molecular_abundance = 10**-8 # abundance of NH3 relative to H2
+molecular_abundance = 2*10**-8 # abundance of NH3 relative to H2
 mh = 1.67e-24
 pc = 3.09e18
-box = 5.0*pc
+box = 10.0*pc
+fac = 1 # Test / Prefactor for NH3 abundance
 
 # Plots to make
 plot_mol = True
@@ -47,6 +48,7 @@ if plot_mol:
     print(np.mean(nh2), np.median(nh2))
     print(np.mean(data.ndens_mol), np.median(data.ndens_mol))
     #print(np.shape(data.ndens_mol))
+    print("Max density =",np.max(data.ndens_mol))
 
     # Plot Column Density distribution
     fig, ax = plt.subplots()
@@ -54,6 +56,17 @@ if plot_mol:
     ax.set_xscale("log")
     ax.set(xlabel='N$_{NH3}$ [cm$^2$/g] ', ylabel=' N')
     plt.show()
+
+    # Plot effective NH3 abundance (as compared to dust, where we assume the dust traces the molecular gas)
+    if plot_dust == True:
+        rho = data.rhodust/dust_to_gas
+        nh2eff = rho/(2.8*1.67e-24) # Effective H2 assuming all molecular 
+        fig, ax = plt.subplots()
+        ax.hist(np.ravel(nh2*molecular_abundance*fac/nh2eff), bins=np.logspace(np.log10(1e-10),np.log10(2e-7), 25))
+        ax.set_xscale("log")
+        ax.set(xlabel='X$_{NH3}$ [cm$^2$/g] ', ylabel=' N')
+        plt.show()
+
 
     # Plot Column Density maps
     fig = plt.figure()
@@ -68,10 +81,12 @@ if plot_mol:
     ax[1].set(title='H$_2$ Column Density')
 
     plt.show()
+    print("Max Nh2", np.max(Nh2x), np.max(Nh2y), np.max(Nh2z))
+
 
 if plot_temp:
-
     # Plot gas (and dust) temperature distribution
+
     fig, ax = plt.subplots()
     ax.hist(np.ravel(data.gastemp), bins=np.logspace(np.log10(1e0),np.log10(1e5), 20))
     ax.set_xscale("log")
