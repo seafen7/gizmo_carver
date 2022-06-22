@@ -18,6 +18,7 @@
 """
 
 from yt.units import * 
+import numpy as np
 
 # Constants for calculating derived fields
 dust_to_gas = 0.01
@@ -30,7 +31,7 @@ helium_mass_fraction = 0.284 # Default mass fraction in Gizmo
 molecular_abundance = 2*10**-8 # abundance of NH3 relative to H2
 
 # Mask abundance based on accreted particles
-mask_abundance = True
+mask_abundance = False
 
 # Units of the below box values ('pc','cm','AU','ly' accepted)
 box_units = 'pc'
@@ -38,25 +39,27 @@ box_units = 'pc'
 # x, y, z coordinates for the center of the carved domain (e.g., location of a star core)
 # The values should match the unit given by box_units
 #box_center = [15.95957649, 15.54566532, 15.19446488] #M2e3, center = 15
-box_center = [50.0, 50.0, 50.0]  #M2e4 center = 50
+box_center = [15.0, 15.0, 15.0]  #M2e4 center = 50
 
 # Routine will generate input files for a square area centered at box_center 
 # extending to box_center += box_size on each side
 # Use same units as box_units
-box_size = 10.0 # pc (=L/2)
+box_size = 2.5 # pc (=L/2)
 
 # Resolution of the resulting image (give as a complex number, e.g. for 
 # box_dim = 64j, the resulting image will be 64x64)
-box_dim = 512j
+box_dim = 256j
+
+# Snapshot number
+snap = '500'
 
 # Name tag for output file directory
-tag = 'sn0500_512_'
+tag = 'sn'+snap+'_'+ np.str(np.int(np.imag(box_dim)))+'_'
 
 # Filepath of the HDF5 file name to read in
 # If the HDF5 file is located in the same directory as the script files, 
 # you can just put the file name
 hdf5_dir = '/scratch3/03532/mgrudic/STARFORGE_RT/production/M2e4_R10_S0_T1_B0.01_Res271_n2_sol0.5_42/output/'
-hdf5_file =  hdf5_dir+'snapshot_500.hdf5' #'./M2e3_mid.hdf5'
 
 # unit base to use for calculations
 unit_base = {'UnitMagneticField_in_gauss':  1e+4,
@@ -77,7 +80,8 @@ existing_filepath = '/home1/00653/tg458122/gizmo_carver/default_files'
 
 # Filepath for storing output files. Routine will make a working directory within this
 # output directory for each run.
-output_filepath = '/work2/00653/tg458122/frontera/_gizmo_radmc/M2e4_fid_output_files/'#'./output_files' #Used for M2e3 tests
+output_filepath = '/work2/00653/tg458122/frontera/_gizmo_radmc/M2e3_R3_S0_T1_B0.01_Res126_n2_sol0.5_42/'
+#/M2e4_fid_output_files/'#'./output_files' #Used for M2e3 tests
 
 
 # Output file names for use in RADMC3D

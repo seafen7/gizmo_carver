@@ -2,11 +2,13 @@
    main_gizmo_carver.py
 
    Purpose:
-        Driver file for RADMC carve routines. Call this file when you want
+        Driver file for RADMC carve routines. Call this function when you want
         to run the code. Should not ever need to edit this file.
+        See inputs_gizmo_carver.py for parameter defaults
 
-   Author:
+   Authors:
         Sean Feng, feng.sean01@utexas.edu
+        Stella Offner
         Spring 2022
         
         Modified from: main_CarveOut.py, written by:
@@ -30,35 +32,27 @@ from new_fields_list import *
 import sys
 import h5py as h5py
 
-
-def _MaskedMolecularNumDensity(field, data):
-    mask = data[('PartType0', 'ParticleIDs')]*0.0
-    exist = np.where(np.isin(alllines[:,1], data[('PartType5','ParticleIDs')])== True)[0]  # Find all the rows of particles that exist here
-    #print(" len of existing rows =", len(exist))
-    ind = np.where(np.isin(data[('PartType0','ParticleIDs')], alllines[exist,6])== True)[0]
-    #print(" len of accreted particles =", len(ind))
-    mask[ind] = 1
-    return data[('PartType0', 'H2NumDensity')]*inputs.molecular_abundance*(data[('PartType0','H2NumDensity')] > yt.YTArray([1e2], "cm**-3"))*( data[('PartType0','gas_temperature')] < yt.YTArray([1e2], "K"))*mask
-
 # Overload box_center, snapshot number, and directory in case 
 # we want to loop through snapshots or star locations:
-def main_gizmo_carver(box_center=inputs.box_center, snap=inputs.snap, hdf5_dir=inputs.hdf5_dir):
-    hdf5_file =  hdf5_dir+'snapshot_'+snap+'.hdf5' #'./M2e3_mid.hdf5'
+
+def main_gizmo_carver(box_center=inputs.box_center, snap=inputs.snap, hdf5_dir=inputs.hdf5_dir, tag=inputs.tag):
+
+    hdf5_file =  hdf5_dir+'snapshot_'+snap+'.hdf5'
+    tag = 'sn'+snap+'_'+ np.str(np.int(np.imag(inputs.box_dim)))+'_'
 
     if inputs.mask_abundance == True:
         # Need to read and concatenate these files of accreted particles
         fns = glob.glob(hdf5_dir+"/blackhole_details/bhswallow*.txt")
-        #print("Accretion files =", fns)
-
+      
         alllines = np.empty((0,19))
         for file in fns:
-            #read file
             lines = np.loadtxt(file, comments="#", delimiter=" ", unpack=False)
             #print(np.shape(alllines), np.shape(lines), file, lines)
             alllines=np.concatenate((alllines, lines), axis=0)
 
         #yt.add_field(('PartType0', 'Mask'), function=_Mask, units='g/cm**3', sampling_type='particle', force_override=True)
 
+        # Must define this here so file information is in scope
         def _MaskedMolecularNumDensity(field, data):
             mask = data[('PartType0', 'ParticleIDs')]*0.0
             exist = np.where(np.isin(alllines[:,1], data[('PartType5','ParticleIDs')])== True)[0]  # Find all the rows of particles that exist here
@@ -70,49 +64,49 @@ def main_gizmo_carver(box_center=inputs.box_center, snap=inputs.snap, hdf5_dir=i
 
         yt.add_field(('PartType0', 'MaskedMolecularNumDensity'), function=_MaskedMolecularNumDensity, units='cm**-3', sampling_type='particle', force_override=True)
 
-    # Loads file into YT
+    # Loads file
     ds = yt.load(hdf5_file, unit_base=inputs.unit_base)
     print("domain = ", ds.domain_left_edge, ds.domain_right_edge)
 
     try:
-        print("Loaded file " + str(ds)) # using classic print() for try/except to work
+        print("Loaded file " + str(ds)) 
     except NameError:
-        assert False, "Unable to properly load file into YT!"
+        assert False, "YT unable to properly load file!"
         
     now = datetime.now()
-    dt_string = now.strftime("%m.%d.%y_%H-%M-%S")
+    dt_string = now.strftime("%m.%d.%y_%H.%M.%S")
 
     # Create working directory for this run
     current_dir = inputs.output_filepath
-    working_dir_name = os.path.join(current_dir, 'RADMC_inputs_' + inputs.tag+dt_string)
+    working_dir_name = os.path.join(current_dir, 'RADMC_inputs_' + tag+dt_string)
     os.mkdir(working_dir_name)
 
     # Make a file to store I/O and setup parameters
     f = open(os.path.join(working_dir_name, inputs.out_makeinput), 'w')
     original_stdout = sys.stdout #Reset do: sys.stdout = original_stdout 
     sys.stdout = f
-    print("Input parameters (inputs_gizmo_carver.py):")
-    print("  dust_to_gas ", inputs.dust_to_gas)
-    print("  molecular_abundance ", inputs.molecular_abundance)
-    print("  mask abundance ", inputs.mask_abundance)
-    print("  box_size, box_dim, box_center ", inputs.box_size, inputs.box_dim, box_center)
-    print("  hdf5_file ", hdf5_file)
-    f = h5py.File(hdf5_file, 'r')
-    part = f['PartType5']
-    print(" Simulation time [code units] = ", f['Header'].attrs['Time'])
-    print(" Number of stars =", len(f['PartType5']['StellarFormationTime']))
+    print(">> INPUT PARAMETERS (inputs_gizmo_carver.py): <<")
+    print("   dust_to_gas ", inputs.dust_to_gas)
+    print("   molecular_abundance ", inputs.molecular_abundance)
+    print("   mask abundance ", inputs.mask_abundance)
+    print("   box_size, box_dim, box_center ", inputs.box_size, inputs.box_dim, box_center)
+    print("   hdf5_file ", hdf5_file)
+    f = h5py.File(hdf5_file, 'r') # Retrieve some basic information
+    print("  Simulation time [code units] = ", f['Header'].attrs['Time'])
+    if "PartType5" in f:
+        part = f['PartType5']
+        print("  Number of stars =", len(f['PartType5']['StellarFormationTime']))
 
-    print("Setup output (main_gizmo_carver): ")
+    print("\n>> SETUP OUTPUT (main_gizmo_carver): <<")
     
     box_left = np.add(box_center, -inputs.box_size)
     box_right = np.add(box_center, inputs.box_size)
     box_left_cgs = [Convert(x, inputs.box_units, 'cm', 'cm') for x in box_left]
     box_right_cgs = [Convert(x, inputs.box_units, 'cm', 'cm') for x in box_right]
-
-    box_left_cgs = unyt_array(box_left_cgs, 'cm')
+    box_left_cgs = unyt_array(box_left_cgs, 'cm')   # Format required by yt
     box_right_cgs = unyt_array(box_right_cgs, 'cm')
 
-    print("\nCarving between Left = " + str(box_left_cgs))
+    print("\n Carving between Left = " + str(box_left_cgs))
     print("            to Right = " + str(box_right_cgs))
     print("       w/ Resolution = " + str(abs(inputs.box_dim)) + " x " + str(abs(inputs.box_dim)) + "\n")
 
