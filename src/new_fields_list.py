@@ -1,6 +1,7 @@
 import yt
 import inputs_gizmo_carver as inputs
 from yt.units import *
+import numpy as np
 
 # Definition of the dust density. Uses dust to gas ratio from inputs file
 def _DustDensity(field, data):
@@ -50,16 +51,6 @@ def _Mask(field, data):
         ind = np.where(np.isin(data[('PartType0','ParticleIDs')], alllines[acclist,6])== True)[0]  # Particle ids of the accreted particles
         mask[ind] = 1
     return mask
-
-
-def _MaskedMolecularNumDensity(field, data):
-    mask = data[('PartType0', 'ParticleIDs')]*0.0
-    exist = np.where(np.isin(alllines[:,1], data[('PartType5','ParticleIDs')])== True)[0]  # Find all the rows of particles that exist here
-    print(" len of existing rows =", len(exist))
-    ind = np.where(np.isin(data[('PartType0','ParticleIDs')], alllines[exist,6])== True)[0]
-    print(" len of accreted particles =", len(ind))
-    mask[ind] = 1
-    return data[('PartType0', 'H2NumDensity')]*inputs.molecular_abundance*(data[('PartType0','H2NumDensity')] > yt.YTArray([1e2], "cm**-3"))*( data[('PartType0','gas_temperature')] < yt.YTArray([1e2], "K"))*mask
    
 
 # Add all the fields
