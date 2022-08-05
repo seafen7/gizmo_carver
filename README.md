@@ -58,7 +58,7 @@ default_files directory. Add your radmc submission command to `submit_script.sh`
 Then, simply run the `main_gizmo_carver.py` file to generate the complete set of 
 RADMC-3D input files for your chosen parameters. 
 
-After running RADMC-3D (submit_script.sh) on these files, the `radmc_image_processing.py` script can be used
+After running RADMC-3D (`submit_script.sh`) on these files, the `radmc_image_processing.py` script can be used
 to generate the moment 0, 1, and 2 maps of the output image file.
 
 For more complete instructions, see the [full documentation](https://github.com/seafen7/gizmo_carver/blob/main/doc/FULL_DOC.md).
