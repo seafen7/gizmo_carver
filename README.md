@@ -53,8 +53,8 @@ these files may be needed for certain observation parameters.
 
 After cloning this repo to your local machine, modify the `inputs_gizmo_carver.py` file
 to match the desired input and output parameters. Also ensure that the GIZMO dataset file
-is present within the working directory. Copy your compiled radmc3d executable into the
-default_files directory. Add your radmc submission command to submit_script.sh.
+is present within the working directory. Copy your compiled `radmc3d` executable into the
+default_files directory. Add your radmc submission command to `submit_script.sh`.
 Then, simply run the `main_gizmo_carver.py` file to generate the complete set of 
 RADMC-3D input files for your chosen parameters. 
 
