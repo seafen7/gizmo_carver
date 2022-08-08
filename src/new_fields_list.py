@@ -17,8 +17,9 @@ def _gas_temp(field, data):
     #const = ((1.2*mh.in_mks()*(gamma-1))/kboltz.in_mks())
 
     const = (mu*mh.in_mks()*(inputs.gamma-1))/(1e6*kboltz.in_mks())
-    # Note the temperature tables are limited to 1e5K
-    return (data[('PartType0','InternalEnergy')]*const * ( data[('PartType0','InternalEnergy')] < yt.YTArray([9e4], "K")/const))
+    # Note the LTE temperature tables are limited to 1e5K
+    # Non-LTE may require lower temperatures
+    return (data[('PartType0','InternalEnergy')]*const * ( data[('PartType0','InternalEnergy')] < yt.YTArray([300], "K")/const))
 
 # Definition of the target species field. Uses info from inputs
 def _H2NumDensity(field, data):

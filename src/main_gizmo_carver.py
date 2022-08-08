@@ -122,6 +122,8 @@ def main_gizmo_carver(box_center=inputs.box_center, snap=inputs.snap, hdf5_dir=i
         writer.write_line_file(('PartType0', 'MaskedMolecularNumDensity'), os.path.join(working_dir_name, inputs.out_nfname))
     else:
         writer.write_line_file(('PartType0', 'MolecularNumDensity'), os.path.join(working_dir_name, inputs.out_nfname))
+
+    writer.write_line_file(('PartType0', 'H2NumDensity'), os.path.join(working_dir_name, inputs.out_nhname))
         
     # Write the dust density file for dust (slow)
     print("3/7: Writing dust density file (slow.)")
