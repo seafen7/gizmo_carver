@@ -206,11 +206,16 @@ class RadMC3DWriter_Gizmo:
             data_x = cg[field[0]]
             data_y = cg[field[1]]
             data_z = cg[field[2]]
-            # Shift to mean velocity frame
-            data_x = data_x - np.mean(data_x)
-            data_y = data_y - np.mean(data_y)
-            data_z = data_z - np.mean(data_z)
+         
+            # Shift by COM 
+            meanvx = np.sum(data_x * cg[('PartType0','Density')])/ np.sum(cg[('PartType0','Density')])
+            meanvy = np.sum(data_y * cg[('PartType0','Density')])/ np.sum(cg[('PartType0','Density')])
+            meanvz = np.sum(data_z * cg[('PartType0','Density')])/ np.sum(cg[('PartType0','Density')])
             print("Shift velocities by mean ", np.mean(data_x), np.mean(data_y), np.mean(data_z))
+            data_x = data_x - meanvx
+            data_y = data_y - meanvy
+            data_z = data_z - meanvz
+         
             write_3D_vector_array(data_x, data_y, data_z, fhandle)
         else:
             data = cg[field]
