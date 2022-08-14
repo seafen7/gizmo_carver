@@ -202,9 +202,15 @@ class RadMC3DWriter_Gizmo:
         cg = self._covering_grid(self.ds) # Replaced with custom covering_grid function
         
         if isinstance(field, list):
+            # Velocity information
             data_x = cg[field[0]]
             data_y = cg[field[1]]
             data_z = cg[field[2]]
+            # Shift to mean velocity frame
+            data_x = data_x - np.mean(data_x)
+            data_y = data_y - np.mean(data_y)
+            data_z = data_z - np.mean(data_z)
+            print("Shift velocities by mean ", np.mean(data_x), np.mean(data_y), np.mean(data_z))
             write_3D_vector_array(data_x, data_y, data_z, fhandle)
         else:
             data = cg[field]
