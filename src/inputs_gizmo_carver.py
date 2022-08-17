@@ -39,19 +39,19 @@ box_units = 'pc'
 # x, y, z coordinates for the center of the carved domain (e.g., location of a star core)
 # The values should match the unit given by box_units
 #box_center = [15.95957649, 15.54566532, 15.19446488] #M2e3, center = 15
-box_center = [50.0, 50.0, 50.0]  #M2e4 center = 50
+box_center = [55.8,44.8, 57.2] # Core 1, 330  #M2e4 center = 50
 
 # Routine will generate input files for a square area centered at box_center 
 # extending to box_center += box_size on each side
 # Use same units as box_units
-box_size = 3.0 # pc (=L/2)
+box_size = 0.5 # pc (=L/2)
 
 # Resolution of the resulting image (give as a complex number, e.g. for 
 # box_dim = 64j, the resulting image will be 64x64)
 box_dim = 256j
 
 # Snapshot number
-snap = '500'
+snap = '330'
 
 # Name tag for output file directory
 tag = 'sn'+snap+'_'+ np.str(np.int(np.imag(box_dim)))+'_'
@@ -80,11 +80,13 @@ existing_filepath = '/home1/00653/tg458122/gizmo_carver/default_files'
 
 # Filepath for storing output files. Routine will make a working directory within this
 # output directory for each run.
-output_filepath = '/work2/00653/tg458122/frontera/_gizmo_radmc/M2e4_fid_output_files'
+output_filepath = '/work2/00653/tg458122/frontera/_gizmo_radmc/M2e4_fid_output_files/_cores'
 
 #M2e3_R3_S0_T1_B0.01_Res126_n2_sol0.5_42/'
 #/M2e4_fid_output_files/'#'./output_files' #Used for M2e3 tests
 
+# Write a new line file rather than use defaults file
+write_line_file = True
 
 # Output file names for use in RADMC3D
 out_afname = "amr_grid.inp"       # output file name for amr grid
