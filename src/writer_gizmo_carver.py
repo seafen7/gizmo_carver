@@ -19,6 +19,7 @@
 
 import numpy as np
 import yt
+import natconst as nc
 from yt.utilities.lib.write_array import write_3D_array, write_3D_vector_array # same as carver_CarveOut
 from yt.extensions.astro_analysis.radmc3d_export.RadMC3DInterface import RadMC3DLayer, RadMC3DSource
 
@@ -294,6 +295,26 @@ class RadMC3DWriter_Gizmo:
 
         fhandle.close()
         
-        
+   def writeLineFile(filename="camera_wavelength_micron.inp", vmax = 30, nwav = 256, restfreq=115.2712018E9)
+   """
+        This method writes the set of wavelengths radmc needs for a molecular line calculation.
+        Output is linearly spaced in velocity [-vmax, vmin] about the line rest wavelength
+        ----------
+        nwav : int
+            Number of wavelengths
+        filename : string
+            The name of the file to write the data to. 
+        restfreq: double
+            Value of the line rest frequency
+        """
+   
+      vels = np.linspace(-vmax,vmin,nwav)*1e5 # [cm/s]
+      restwav = nc.cc/restfreq * 1e4 # Convert frequency to micron
+      wav = restwav/(1.0-vels/nc.cc)
+      with open(filename, 'w') as wfile:
+                wfile.write('%d\n' % nwav)
+                for ilam in range(nwav):
+                    wfile.write('%.9e\n' % wav[ilam])
+
         
         
