@@ -88,10 +88,12 @@ output_filepath = '/work2/00653/tg458122/frontera/_gizmo_radmc/M2e4_fid_output_f
 # Write a new line file rather than use defaults file
 write_line_file = True
 # velocity max/min for the wavelength file
-vmax = 30 # km/s
+vmax = 10 # km/s
+# number of wavelengths in output file
+nwav = 256
 # Line rest frequency, see molecule_x.inp file
-frest = 230.5380000E9 # 12CO (1-0): 115.2712018E9, (2-1) 230.5380000E9
-#frest = 23.69449550E9 # NH3[1,1]
+restfreq = 23.69449550E9 # 12CO (1-0): 115.2712018E9, (2-1) 230.5380000E9
+#restfreq = 23.69449550E9 # NH3[1,1]
 
 # Output file names for use in RADMC3D
 out_afname = "amr_grid.inp"       # output file name for amr grid
