@@ -149,7 +149,7 @@ def main_gizmo_carver(box_center=inputs.box_center, snap=inputs.snap, hdf5_dir=i
     # Write the wavelength file
     if inputs.write_line_file == True:
 	print("Writing line file ...")
-	writer.writeWavelengthGrid(fname=os.path.join(working_dir_name, inputs.cwlname))
+	write.writeLineFile(filename=os.path.join(working_dir_name, inputs.cwlname), vmax = inputs.vmax, nwav = inputs.nwav, restfreq=inputs.restfreq)
     else:
 	print("Copying exisiting line file ..."
     	shutil.copy(os.path.join(inputs.exisiting_filepath, inputs.out_cwlname), working_dir_name)
