@@ -148,11 +148,13 @@ def main_gizmo_carver(box_center=inputs.box_center, snap=inputs.snap, hdf5_dir=i
 
     # Write the wavelength file
     if inputs.write_line_file == True:
-	print("Writing line file ...")
-	write.writeLineFile(filename=os.path.join(working_dir_name, inputs.cwlname), vmax = inputs.vmax, nwav = inputs.nwav, restfreq=inputs.restfreq)
+        print("Writing line file ...")
+        #file = os.path.join(working_dir_name, inputs.out_cwlname)
+        #print("parameters =", inputs.vmax, inputs.nwav, inputs.restfreq, len(file) )
+        writer.writeMolLineFile(os.path.join(working_dir_name, inputs.out_cwlname), inputs.vmax, inputs.nwav, inputs.restfreq)
     else:
-	print("Copying exisiting line file ..."
-    	shutil.copy(os.path.join(inputs.exisiting_filepath, inputs.out_cwlname), working_dir_name)
+        print("Copying exisiting line file ...")
+        shutil.copy(os.path.join(inputs.existing_filepath, inputs.out_cwlname), working_dir_name)
 
     # Copy over existing files
     print('Copying default files...')
