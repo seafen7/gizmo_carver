@@ -319,7 +319,10 @@ class radmc3dImage(object):
         # --------------------------------------------------------------------------------------------------
         istokes = 0
 
-
+        arcsec2degree = 1.0 / 3600.0
+        degree2radian = np.pi / 180.0
+        erg2jy = 1.0e23
+       
         if self.stokes:
             if fname == '':
                 fname = 'image_stokes_' + stokes.strip().upper() + '.fits'
@@ -368,12 +371,13 @@ class radmc3dImage(object):
 
         if len(self.fwhm) == 0:
             # Conversion from erg/s/cm/cm/ster to Jy/pixel
-            conv = self.sizepix_x * self.sizepix_y / (dpc * nc.pc)**2. * 1e23
+            conv = self.sizepix_x * self.sizepix_y / (nc.au * dpc )**2. * (arcsec2degree * degree2radian)**2. * erg2jy
         else:
             # If the image has already been convolved with a gaussian psf then self.image has
             # already the unit of erg/s/cm/cm/beam, so we need to multiply it by 10^23 to get
             # to Jy/beam
-            conv = 1e23
+            # SO Image does not seem to have the correct units here
+            conv = self.sizepix_x * self.sizepix_y / (nc.au * dpc)**2. * erg2jy  * (arcsec2degree * degree2radian)**2.0
 
         # Create the data to be written
         if casa:
@@ -865,8 +869,8 @@ class radmc3dImage(object):
         Returns a radmc3dImage
         """
 
-        dx = self.sizepix_x / nc.au / dpc
-        dy = self.sizepix_y / nc.au / dpc
+        dx = self.sizepix_x / nc.au / dpc  #Convert to arcsec given distance
+        dy = self.sizepix_y / nc.au / dpc 
         nfreq = self.nfreq
         psf = None
         cimage = None
@@ -958,6 +962,7 @@ class radmc3dImage(object):
         # Return the convolved image (copy the image class and replace the image attribute to the convolved image)
         res = copy.deepcopy(self)
         res.image = cimage
+        # SO It doesn't look like this has been converted from sr to pix properly
         conv = self.sizepix_x * self.sizepix_y / nc.pc**2. * 1e23
         res.imageJyppix = res.image * conv
 
