@@ -278,7 +278,7 @@ class radmc3dImage(object):
 
     # --------------------------------------------------------------------------------------------------
     def writeFits(self, fname='', dpc=1., coord='03h10m05s -10d05m30s', bandwidthmhz=2000.0,
-                  casa=False, nu0=0., stokes='I', fitsheadkeys=[], ifreq=None):
+                  casa=False, nu0=0., stokes='I', fitsheadkeys=[], ifreq=None, spectral_axis_vel=False, getBandwidthFromFile=True, velocityCenter_kms=0.0):
         """Writes out a RADMC-3D image data in fits format.
 
         Parameters
@@ -315,6 +315,9 @@ class radmc3dImage(object):
         ifreq        : int
                        Frequency index of the image array to write. If set only this frequency of a multi-frequency
                        array will be written to file.
+
+        spectral_axis_vel : bool
+                      Convert the axis information into velocity 
         """
         # --------------------------------------------------------------------------------------------------
         istokes = 0
@@ -370,15 +373,33 @@ class radmc3dImage(object):
             target_dec = (dec[0] - dec[1] / 60. - dec[2] / 3600.)
 
         if len(self.fwhm) == 0:
-            # Conversion from erg/s/cm/cm/ster to Jy/pixel
+            # Conversion from erg/s/cm/cm/ster to Jy/pixel 
             conv = self.sizepix_x * self.sizepix_y / (nc.au * dpc )**2. * (arcsec2degree * degree2radian)**2. * erg2jy
         else:
             # If the image has already been convolved with a gaussian psf then self.image has
             # already the unit of erg/s/cm/cm/beam, so we need to multiply it by 10^23 to get
             # to Jy/beam
-            # SO Image does not seem to have the correct units here
-            conv = self.sizepix_x * self.sizepix_y / (nc.au * dpc)**2. * erg2jy  * (arcsec2degree * degree2radian)**2.0
+            # SO Assumes fwhm is in units of arcsecs 
+            conv = 2.665e-11 * self.fwhm[0] * self.fwhm[1] * erg2jy  
 
+
+        if getBandwidthFromFile is True:
+            c_ms = nc.cc * 100.
+            # calculating the bandwidth from the input file
+            wavelength_m = self.wav * 1.0e-6
+            wavelength_cm = self.wav * 1.0e-4
+            nu_hz = c_ms / wavelength_m
+
+            Delta_v_ms = []
+            if self.nfreq > 1:
+                for i in range(len(wavelength_m) - 1):
+                    Delta_v_ms.append(c_ms * (nu_hz[i + 1] - nu_hz[i]) / nu0)
+            else:
+                Delta_v_ms.append(0.)
+
+            delta_v_ms = np.mean(Delta_v_ms)
+            delta_nu_hz = -1.0 * nu0 * delta_v_ms / c_ms 
+            
         # Create the data to be written
         if casa:
             # Put the stokes axis to the 4th dimension
@@ -489,7 +510,15 @@ class radmc3dImage(object):
                     hdulist[0].header.set('CRVAL3', self.freq[ifreq], '')
                     hdulist[0].header.set('CUNIT3', '      HZ', '')
                     hdulist[0].header.set('CTYPE3', 'FREQ-LSR', '')
+                if spectral_axis_vel is True:
+                    hdulist[0].header.set('CRPIX3', (self.nwav + 1.0)/2.0, '')
+                    hdulist[0].header.set('CDELT3', delta_v_ms, '')
+                    hdulist[0].header.set('CRVAL3', velocityCenter_kms * 1.0e3)
 
+                    hdulist[0].header.set('CRTYPE3', 'VELO-LSR', '')
+                    hdulist[0].header.set('CUNIT3', '     m/s', '')
+                    
+                    
         if nu0 > 0:
             hdulist[0].header.set('RESTFRQ', nu0, '')
         else:
