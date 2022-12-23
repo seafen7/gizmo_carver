@@ -20,11 +20,12 @@ import os
 dust_to_gas = 0.01 # dust to gas ratio
 hydrogen_ratio = 1.4 # nH/nHe = 10
 helium_mass_fraction = 0.284
-molecular_abundance = 2*10**-8 # abundance of NH3 relative to H2
+molecular_abundance = 1e-4 #2*10**-8 # abundance of NH3 relative to H2
 mh = 1.67e-24
 pc = 3.09e18
 box = 10.0*pc
 fac = 1 # Test / Prefactor for NH3 abundance
+mname = 'co'
 
 # Plots to make
 plot_mol = True
@@ -33,11 +34,15 @@ plot_dust = False
 save = True     # Save plots
 
 # Read input data used for RADMC calculation
-data = analyze.readData(gdens=True,ddens=plot_dust,ispec='nh3', gtemp=plot_temp)
+data = analyze.readData(gdens=True,ddens=plot_dust,ispec=mname, gtemp=plot_temp,gvel=save,gmag=save)
 sz = len(data.ndens_mol)
 dx = box/sz
 print("Box (pc), sz, dx (pc)", box/pc, sz, dx/pc)
 #print(data.__dict__) # Names of data structures
+
+if save == True:
+    np.save('GasVel.npy', data.gasvel)
+    np.save('GasMagField.npy', data.gasmag)
 
 # Calculate N(H2) and N(NH3)
 if plot_mol:
@@ -55,9 +60,10 @@ if plot_mol:
     fig, ax = plt.subplots()
     ax.hist(np.ravel(Nh2x*molecular_abundance), bins=np.logspace(np.log10(1e10),np.log10(2e15), 25))
     ax.set_xscale("log")
-    ax.set(xlabel='N$_{NH3}$ [cm$^2$/g] ', ylabel=' N')
+    ax.set(xlabel='N$_{'+mname+'}$ [cm$^{-2}$] ', ylabel=' N')
     if save == True:
-        plt.savefig("ColNH3_dist_check.png")
+        plt.savefig("Col"+mname+"_dist_check.png")
+        np.save('Ndens_'+mname+'.npy', data.ndens_mol)
     else:
         plt.show()
 
@@ -68,9 +74,9 @@ if plot_mol:
         fig, ax = plt.subplots()
         ax.hist(np.ravel(nh2*molecular_abundance*fac/nh2eff), bins=np.logspace(np.log10(1e-10),np.log10(2e-7), 25))
         ax.set_xscale("log")
-        ax.set(xlabel='X$_{NH3}$ [cm$^2$/g] ', ylabel=' N')
+        ax.set(xlabel='X$_{'+mname+'}$ [cm$^2$/g] ', ylabel=' N')
         if save == True:
-            plt.savefig("X_NH3_dist_in.png")
+            plt.savefig("X_"+mname+"_dist_check.png")
         else:
             plt.show()
 
@@ -88,7 +94,7 @@ if plot_mol:
     ax[1].set(title='H$_2$ Column Density')
 
     if save == True:
-        plt.savefig("ColH2_dist.png")
+        plt.savefig("ColH2_dist_check.png")
     else:
         plt.show()
     print("Max Nh2", np.max(Nh2x), np.max(Nh2y), np.max(Nh2z))
@@ -102,6 +108,7 @@ if plot_temp:
     ax.set_xscale("log")
     ax.set(xlabel='T [K]', ylabel=' N')
     if save == True:
-        plt.savefig("Gastemp_dist_in.png")
+        plt.savefig("Gastemp_dist_check.png")
+        np.save('Gastemp.npy', data.gastemp)
     else:
         plt.show()
