@@ -68,7 +68,7 @@ def _DustTemperature(field, data):
     try:
         return yt.YTArray(data[("PartType0", "Dust_Temperature")], "K")
     except:
-        return data["gas_temperature"]
+        return data["gas_temperature"].clip(0,20) # rough approximation - can do better using radiation fields if required
 
 
 # Create a mask based on accreted particles
