@@ -13,40 +13,47 @@ try:
     import numpy as np
 except ImportError:
     np = None
-    print(' Numpy cannot be imported ')
-    print(' To use the python module of RADMC-3D you need to install Numpy')
+    print(" Numpy cannot be imported ")
+    print(" To use the python module of RADMC-3D you need to install Numpy")
     print(traceback.format_exc())
 
 try:
     import scipy.special as spc
 except ImportError:
     spc = None
-    print('scipy.special cannot be imported ')
-    print('This module is required to be able to calculate Airy-PSFs. Now PSF calculation is limited to Gaussian.')
+    print("scipy.special cannot be imported ")
+    print(
+        "This module is required to be able to calculate Airy-PSFs. Now PSF calculation is limited to Gaussian."
+    )
     print(traceback.format_exc())
 
 try:
     from astropy.io import fits as pf
 except ImportError:
-    print('astropy.io.fits cannot be imported trying pyfits')
+    print("astropy.io.fits cannot be imported trying pyfits")
     try:
         import pyfits as pf
     except ImportError:
         pf = None
-        print('pyfits cannot be imported. Either of these modules is needed to write RADMC-3D images '
-              + 'to FITS format. The rest of radmc3dPy can be used but fits output is now disabled.')
+        print(
+            "pyfits cannot be imported. Either of these modules is needed to write RADMC-3D images "
+            + "to FITS format. The rest of radmc3dPy can be used but fits output is now disabled."
+        )
         print(traceback.format_exc())
 
 try:
     import matplotlib.pylab as plt
 except ImportError:
     plt = None
-    print('Warning')
-    print('matplotlib.pyplot cannot be imported')
-    print('Without matplotlib you can use the python module to set up a model but you will not be able to plot things')
-    print('or display images')
+    print("Warning")
+    print("matplotlib.pyplot cannot be imported")
+    print(
+        "Without matplotlib you can use the python module to set up a model but you will not be able to plot things"
+    )
+    print("or display images")
 
 from . import natconst as nc
+
 
 class radmc3dImage(object):
     """
@@ -111,7 +118,7 @@ class radmc3dImage(object):
         self.fwhm = []
         self.pa = 0
         self.dpc = 0
-        self.filename = 'image.out'
+        self.filename = "image.out"
 
     def getClosurePhase(self, bl=None, pa=None, dpc=None):
         """Calculates clusure phases for a given model image for any arbitrary baseline triplet.
@@ -152,18 +159,20 @@ class radmc3dImage(object):
         """
 
         ntri = len(bl)
-        res = {'bl': np.array(bl, dtype=np.float64),
-               'pa': np.array(pa, dtype=np.float64),
-               'ntri': ntri,
-               'nbl': 3,
-               'nwav': self.nwav,
-               'wav': self.wav,
-               'u': np.zeros([ntri, 3, self.nwav], dtype=np.float64),
-               'v': np.zeros([ntri, 3, self.nwav], dtype=np.float64),
-               'vis': np.zeros([ntri, 3, self.nwav], dtype=np.complex64),
-               'amp': np.zeros([ntri, 3, self.nwav], dtype=np.float64),
-               'phase': np.zeros([ntri, 3, self.nwav], dtype=np.float64),
-               'cp': np.zeros([ntri, self.nwav], dtype=np.float64)}
+        res = {
+            "bl": np.array(bl, dtype=np.float64),
+            "pa": np.array(pa, dtype=np.float64),
+            "ntri": ntri,
+            "nbl": 3,
+            "nwav": self.nwav,
+            "wav": self.wav,
+            "u": np.zeros([ntri, 3, self.nwav], dtype=np.float64),
+            "v": np.zeros([ntri, 3, self.nwav], dtype=np.float64),
+            "vis": np.zeros([ntri, 3, self.nwav], dtype=np.complex64),
+            "amp": np.zeros([ntri, 3, self.nwav], dtype=np.float64),
+            "phase": np.zeros([ntri, 3, self.nwav], dtype=np.float64),
+            "cp": np.zeros([ntri, self.nwav], dtype=np.float64),
+        }
 
         # l = self.x / nc.au / dpc / 3600. / 180. * np.pi
         # m = self.y / nc.au / dpc / 3600. / 180. * np.pi
@@ -171,18 +180,20 @@ class radmc3dImage(object):
         # dm = m[1] - m[0]
 
         for itri in range(ntri):
-            print('Calculating baseline triangle # : ', itri)
+            print("Calculating baseline triangle # : ", itri)
 
-            dum = self.getVisibility(bl=res['bl'][itri, :], pa=res['pa'][itri, :], dpc=dpc)
-            res['u'][itri, :, :] = dum['u']
-            res['v'][itri, :, :] = dum['v']
-            res['vis'][itri, :, :] = dum['vis']
-            res['amp'][itri, :, :] = dum['amp']
-            res['phase'][itri, :, :] = dum['phase']
-            res['cp'][itri, :] = (dum['phase'].sum(0) / np.pi * 180.) % 360.
-            ii = res['cp'][itri, :] > 180.
-            if (res['cp'][itri, ii]).shape[0] > 0:
-                res['cp'][itri, ii] = res['cp'][itri, ii] - 360.
+            dum = self.getVisibility(
+                bl=res["bl"][itri, :], pa=res["pa"][itri, :], dpc=dpc
+            )
+            res["u"][itri, :, :] = dum["u"]
+            res["v"][itri, :, :] = dum["v"]
+            res["vis"][itri, :, :] = dum["vis"]
+            res["amp"][itri, :, :] = dum["amp"]
+            res["phase"][itri, :, :] = dum["phase"]
+            res["cp"][itri, :] = (dum["phase"].sum(0) / np.pi * 180.0) % 360.0
+            ii = res["cp"][itri, :] > 180.0
+            if (res["cp"][itri, ii]).shape[0] > 0:
+                res["cp"][itri, ii] = res["cp"][itri, ii] - 360.0
 
         return res
 
@@ -219,16 +230,18 @@ class radmc3dImage(object):
         """
 
         nbl = len(bl)
-        res = {'bl': np.array(bl, dtype=np.float64),
-               'pa': np.array(pa, dtype=np.float64),
-               'nbl': nbl,
-               'nwav': self.nwav,
-               'wav': self.wav,
-               'u': np.zeros([nbl, self.nwav], dtype=np.float64),
-               'v': np.zeros([nbl, self.nwav], dtype=np.float64),
-               'vis': np.zeros([nbl, self.nwav], dtype=np.complex64),
-               'amp': np.zeros([nbl, self.nwav], dtype=np.float64),
-               'phase': np.zeros([nbl, self.nwav], dtype=np.float64)}
+        res = {
+            "bl": np.array(bl, dtype=np.float64),
+            "pa": np.array(pa, dtype=np.float64),
+            "nbl": nbl,
+            "nwav": self.nwav,
+            "wav": self.wav,
+            "u": np.zeros([nbl, self.nwav], dtype=np.float64),
+            "v": np.zeros([nbl, self.nwav], dtype=np.float64),
+            "vis": np.zeros([nbl, self.nwav], dtype=np.complex64),
+            "amp": np.zeros([nbl, self.nwav], dtype=np.float64),
+            "phase": np.zeros([nbl, self.nwav], dtype=np.float64),
+        }
 
         # res = {}
         # res['bl'] = np.array(bl, dtype=float)
@@ -245,40 +258,63 @@ class radmc3dImage(object):
         # res['amp'] = np.zeros([res['nbl'], self.nwav], dtype=np.float64)
         # res['phase'] = np.zeros([res['nbl'], self.nwav], dtype=np.float64)
 
-        l = self.x / nc.au / dpc / 3600. / 180. * np.pi
-        m = self.y / nc.au / dpc / 3600. / 180. * np.pi
+        l = self.x / nc.au / dpc / 3600.0 / 180.0 * np.pi
+        m = self.y / nc.au / dpc / 3600.0 / 180.0 * np.pi
         dl = l[1] - l[0]
         dm = m[1] - m[0]
 
-        for iwav in range(res['nwav']):
-
+        for iwav in range(res["nwav"]):
             # Calculate spatial frequencies
-            res['u'][:, iwav] = res['bl'] * np.cos(res['pa']) * 1e6 / self.wav[iwav]
-            res['v'][:, iwav] = res['bl'] * np.sin(res['pa']) * 1e6 / self.wav[iwav]
+            res["u"][:, iwav] = res["bl"] * np.cos(res["pa"]) * 1e6 / self.wav[iwav]
+            res["v"][:, iwav] = res["bl"] * np.sin(res["pa"]) * 1e6 / self.wav[iwav]
 
-            for ibl in range(res['nbl']):
-                dum = complex(0.)
-                imu = complex(0., 1.)
+            for ibl in range(res["nbl"]):
+                dum = complex(0.0)
+                imu = complex(0.0, 1.0)
 
                 for il in range(len(l)):
-                    phase = 2. * np.pi * (res['u'][ibl, iwav] * l[il] + res['v'][ibl, iwav] * m)
+                    phase = (
+                        2.0
+                        * np.pi
+                        * (res["u"][ibl, iwav] * l[il] + res["v"][ibl, iwav] * m)
+                    )
                     cterm = np.cos(phase)
                     sterm = -np.sin(phase)
-                    dum = dum + (self.image[il, :, iwav] * (cterm + imu * sterm)).sum() * dl * dm
+                    dum = (
+                        dum
+                        + (self.image[il, :, iwav] * (cterm + imu * sterm)).sum()
+                        * dl
+                        * dm
+                    )
 
-                res['vis'][ibl, iwav] = dum
-                res['amp'][ibl, iwav] = np.sqrt(abs(dum * np.conj(dum)))
-                res['phase'][ibl, iwav] = np.arccos(np.real(dum) / res['amp'][ibl, iwav])
-                if np.imag(dum) < 0.:
-                    res['phase'][ibl, iwav] = 2. * np.pi - res['phase'][ibl, iwav]
+                res["vis"][ibl, iwav] = dum
+                res["amp"][ibl, iwav] = np.sqrt(abs(dum * np.conj(dum)))
+                res["phase"][ibl, iwav] = np.arccos(
+                    np.real(dum) / res["amp"][ibl, iwav]
+                )
+                if np.imag(dum) < 0.0:
+                    res["phase"][ibl, iwav] = 2.0 * np.pi - res["phase"][ibl, iwav]
 
-                print('Calculating baseline # : ', ibl, ' wavelength # : ', iwav)
+                print("Calculating baseline # : ", ibl, " wavelength # : ", iwav)
 
         return res
 
     # --------------------------------------------------------------------------------------------------
-    def writeFits(self, fname='', dpc=1., coord='03h10m05s -10d05m30s', bandwidthmhz=2000.0,
-                  casa=False, nu0=0., stokes='I', fitsheadkeys=[], ifreq=None, spectral_axis_vel=False, getBandwidthFromFile=True, velocityCenter_kms=0.0):
+    def writeFits(
+        self,
+        fname="",
+        dpc=1.0,
+        coord="03h10m05s -10d05m30s",
+        bandwidthmhz=2000.0,
+        casa=False,
+        nu0=0.0,
+        stokes="I",
+        fitsheadkeys=[],
+        ifreq=None,
+        spectral_axis_vel=False,
+        getBandwidthFromFile=True,
+        velocityCenter_kms=0.0,
+    ):
         """Writes out a RADMC-3D image data in fits format.
 
         Parameters
@@ -317,7 +353,7 @@ class radmc3dImage(object):
                        array will be written to file.
 
         spectral_axis_vel : bool
-                      Convert the axis information into velocity 
+                      Convert the axis information into velocity
         """
         # --------------------------------------------------------------------------------------------------
         istokes = 0
@@ -325,66 +361,71 @@ class radmc3dImage(object):
         arcsec2degree = 1.0 / 3600.0
         degree2radian = np.pi / 180.0
         erg2jy = 1.0e23
-       
-        if self.stokes:
-            if fname == '':
-                fname = 'image_stokes_' + stokes.strip().upper() + '.fits'
 
-            if stokes.strip().upper() == 'I':
+        if self.stokes:
+            if fname == "":
+                fname = "image_stokes_" + stokes.strip().upper() + ".fits"
+
+            if stokes.strip().upper() == "I":
                 istokes = 0
-            if stokes.strip().upper() == 'Q':
+            if stokes.strip().upper() == "Q":
                 istokes = 1
-            if stokes.strip().upper() == 'U':
+            if stokes.strip().upper() == "U":
                 istokes = 2
-            if stokes.strip().upper() == 'V':
+            if stokes.strip().upper() == "V":
                 istokes = 3
         else:
-            if fname == '':
-                fname = 'image.fits'
+            if fname == "":
+                fname = "image.fits"
 
         # Decode the image center cooridnates
         # Check first whether the format is OK
         dum = coord
 
         ra = []
-        delim = ['h', 'm', 's']
+        delim = ["h", "m", "s"]
         for i in delim:
             ind = dum.find(i)
             if ind <= 0:
                 msg = 'coord keyword has a wrong format. The format should be coord="0h10m05s -10d05m30s"'
                 raise ValueError(msg)
             ra.append(float(dum[:ind]))
-            dum = dum[ind + 1:]
+            dum = dum[ind + 1 :]
 
         dec = []
-        delim = ['d', 'm', 's']
+        delim = ["d", "m", "s"]
         for i in delim:
             ind = dum.find(i)
             if ind <= 0:
                 msg = 'coord keyword has a wrong format. The format should be coord="0h10m05s -10d05m30s"'
                 raise ValueError(msg)
             dec.append(float(dum[:ind]))
-            dum = dum[ind + 1:]
+            dum = dum[ind + 1 :]
 
-        target_ra = (ra[0] + ra[1] / 60. + ra[2] / 3600.) * 15.
+        target_ra = (ra[0] + ra[1] / 60.0 + ra[2] / 3600.0) * 15.0
         if dec[0] >= 0:
-            target_dec = (dec[0] + dec[1] / 60. + dec[2] / 3600.)
+            target_dec = dec[0] + dec[1] / 60.0 + dec[2] / 3600.0
         else:
-            target_dec = (dec[0] - dec[1] / 60. - dec[2] / 3600.)
+            target_dec = dec[0] - dec[1] / 60.0 - dec[2] / 3600.0
 
         if len(self.fwhm) == 0:
-            # Conversion from erg/s/cm/cm/ster to Jy/pixel 
-            conv = self.sizepix_x * self.sizepix_y / (nc.au * dpc )**2. * (arcsec2degree * degree2radian)**2. * erg2jy
+            # Conversion from erg/s/cm/cm/ster to Jy/pixel
+            conv = (
+                self.sizepix_x
+                * self.sizepix_y
+                / (nc.au * dpc) ** 2.0
+                * (arcsec2degree * degree2radian) ** 2.0
+                * erg2jy
+            )
         else:
             # If the image has already been convolved with a gaussian psf then self.image has
             # already the unit of erg/s/cm/cm/beam, so we need to multiply it by 10^23 to get
             # to Jy/beam
-            # SO Assumes fwhm is in units of arcsecs 
-            conv = 2.665e-11 * self.fwhm[0] * self.fwhm[1] * erg2jy  
-
+            # SO Assumes fwhm is in units of arcsecs
+            conv = 2.665e-11 * self.fwhm[0] * self.fwhm[1] * erg2jy
 
         if getBandwidthFromFile is True:
-            c_ms = nc.cc * 100.
+            c_ms = nc.cc * 100.0
             # calculating the bandwidth from the input file
             wavelength_m = self.wav * 1.0e-6
             wavelength_cm = self.wav * 1.0e-4
@@ -395,11 +436,11 @@ class radmc3dImage(object):
                 for i in range(len(wavelength_m) - 1):
                     Delta_v_ms.append(c_ms * (nu_hz[i + 1] - nu_hz[i]) / nu0)
             else:
-                Delta_v_ms.append(0.)
+                Delta_v_ms.append(0.0)
 
             delta_v_ms = np.mean(Delta_v_ms)
-            delta_nu_hz = -1.0 * nu0 * delta_v_ms / c_ms 
-            
+            delta_nu_hz = -1.0 * nu0 * delta_v_ms / c_ms
+
         # Create the data to be written
         if casa:
             # Put the stokes axis to the 4th dimension
@@ -414,7 +455,7 @@ class radmc3dImage(object):
         else:
             data = np.zeros([self.nfreq, self.nx, self.ny], dtype=float)
             if self.stokes:
-                if stokes.strip().upper() != 'PI':
+                if stokes.strip().upper() != "PI":
                     if self.nfreq == 1:
                         data[0, :, :] = self.image[:, :, istokes, 0] * conv
 
@@ -423,12 +464,23 @@ class radmc3dImage(object):
                             data[inu, :, :] = self.image[:, :, istokes, inu] * conv
                 else:
                     if self.nfreq == 1:
-                        data[0, :, :] = np.sqrt(self.image[:, :, 1, 0]**2 + self.image[:, :, 2, 0]**2) * conv
+                        data[0, :, :] = (
+                            np.sqrt(
+                                self.image[:, :, 1, 0] ** 2
+                                + self.image[:, :, 2, 0] ** 2
+                            )
+                            * conv
+                        )
 
                     else:
                         for inu in range(self.nfreq):
-                            data[inu, :, :] = np.sqrt(
-                                self.image[:, :, 1, inu]**2 + self.image[:, :, 2, inu]**2) * conv
+                            data[inu, :, :] = (
+                                np.sqrt(
+                                    self.image[:, :, 1, inu] ** 2
+                                    + self.image[:, :, 2, inu] ** 2
+                                )
+                                * conv
+                            )
 
             else:
                 if self.nfreq == 1:
@@ -446,119 +498,129 @@ class radmc3dImage(object):
         hdu = pf.PrimaryHDU(data.swapaxes(naxis - 1, naxis - 2))
         hdulist = pf.HDUList([hdu])
 
-        hdulist[0].header.set('CRPIX1', (self.nx + 1.) / 2., ' ')
-        hdulist[0].header.set('CDELT1', -self.sizepix_x / nc.au / dpc / 3600., '')
+        hdulist[0].header.set("CRPIX1", (self.nx + 1.0) / 2.0, " ")
+        hdulist[0].header.set("CDELT1", -self.sizepix_x / nc.au / dpc / 3600.0, "")
         # hdulist[0].header.set('CRVAL1', self.sizepix_x/1.496e13/dpc/3600.*0.5+target_ra, '')
-        hdulist[0].header.set('CRVAL1', target_ra, '')
-        hdulist[0].header.set('CUNIT1', '     DEG', '')
-        hdulist[0].header.set('CTYPE1', 'RA---SIN', '')
+        hdulist[0].header.set("CRVAL1", target_ra, "")
+        hdulist[0].header.set("CUNIT1", "     DEG", "")
+        hdulist[0].header.set("CTYPE1", "RA---SIN", "")
 
-        hdulist[0].header.set('CRPIX2', (self.ny + 1.) / 2., '')
-        hdulist[0].header.set('CDELT2', self.sizepix_y / nc.au / dpc / 3600., '')
+        hdulist[0].header.set("CRPIX2", (self.ny + 1.0) / 2.0, "")
+        hdulist[0].header.set("CDELT2", self.sizepix_y / nc.au / dpc / 3600.0, "")
         # hdulist[0].header.set('CRVAL2', self.sizepix_y/1.496e13/dpc/3600.*0.5+target_dec, '')
-        hdulist[0].header.set('CRVAL2', target_dec, '')
-        hdulist[0].header.set('CUNIT2', '     DEG', '')
-        hdulist[0].header.set('CTYPE2', 'DEC--SIN', '')
+        hdulist[0].header.set("CRVAL2", target_dec, "")
+        hdulist[0].header.set("CUNIT2", "     DEG", "")
+        hdulist[0].header.set("CTYPE2", "DEC--SIN", "")
 
         # For ARTIST compatibility put the stokes axis to the 4th dimension
         if casa:
-            hdulist[0].header.set('CRPIX4', 1., '')
-            hdulist[0].header.set('CDELT4', 1., '')
-            hdulist[0].header.set('CRVAL4', 1., '')
-            hdulist[0].header.set('CUNIT4', '        ', '')
-            hdulist[0].header.set('CTYPE4', 'STOKES  ', '')
+            hdulist[0].header.set("CRPIX4", 1.0, "")
+            hdulist[0].header.set("CDELT4", 1.0, "")
+            hdulist[0].header.set("CRVAL4", 1.0, "")
+            hdulist[0].header.set("CUNIT4", "        ", "")
+            hdulist[0].header.set("CTYPE4", "STOKES  ", "")
 
             if self.nwav == 1:
-                hdulist[0].header.set('CRPIX3', 1.0, '')
-                hdulist[0].header.set('CDELT3', bandwidthmhz * 1e6, '')
-                hdulist[0].header.set('CRVAL3', self.freq[0], '')
-                hdulist[0].header.set('CUNIT3', '      HZ', '')
-                hdulist[0].header.set('CTYPE3', 'FREQ-LSR', '')
+                hdulist[0].header.set("CRPIX3", 1.0, "")
+                hdulist[0].header.set("CDELT3", bandwidthmhz * 1e6, "")
+                hdulist[0].header.set("CRVAL3", self.freq[0], "")
+                hdulist[0].header.set("CUNIT3", "      HZ", "")
+                hdulist[0].header.set("CTYPE3", "FREQ-LSR", "")
 
             else:
                 if ifreq is None:
-                    hdulist[0].header.set('CRPIX3', 1.0, '')
-                    hdulist[0].header.set('CDELT3', (self.freq[1] - self.freq[0]), '')
-                    hdulist[0].header.set('CRVAL3', self.freq[0], '')
-                    hdulist[0].header.set('CUNIT3', '      HZ', '')
-                    hdulist[0].header.set('CTYPE3', 'FREQ-LSR', '')
-                    hdulist[0].header.set('RESTFRQ', self.freq[0])
+                    hdulist[0].header.set("CRPIX3", 1.0, "")
+                    hdulist[0].header.set("CDELT3", (self.freq[1] - self.freq[0]), "")
+                    hdulist[0].header.set("CRVAL3", self.freq[0], "")
+                    hdulist[0].header.set("CUNIT3", "      HZ", "")
+                    hdulist[0].header.set("CTYPE3", "FREQ-LSR", "")
+                    hdulist[0].header.set("RESTFRQ", self.freq[0])
                 else:
-                    hdulist[0].header.set('CRPIX3', 1.0, '')
-                    hdulist[0].header.set('CDELT3', bandwidthmhz * 1e6, '')
-                    hdulist[0].header.set('CRVAL3', self.freq[ifreq], '')
-                    hdulist[0].header.set('CUNIT3', '      HZ', '')
-                    hdulist[0].header.set('CTYPE3', 'FREQ-LSR', '')
+                    hdulist[0].header.set("CRPIX3", 1.0, "")
+                    hdulist[0].header.set("CDELT3", bandwidthmhz * 1e6, "")
+                    hdulist[0].header.set("CRVAL3", self.freq[ifreq], "")
+                    hdulist[0].header.set("CUNIT3", "      HZ", "")
+                    hdulist[0].header.set("CTYPE3", "FREQ-LSR", "")
 
         else:
             if self.nwav == 1:
-                hdulist[0].header.set('CRPIX3', 1.0, '')
-                hdulist[0].header.set('CDELT3', bandwidthmhz * 1e6, '')
-                hdulist[0].header.set('CRVAL3', self.freq[0], '')
-                hdulist[0].header.set('CUNIT3', '      HZ', '')
-                hdulist[0].header.set('CTYPE3', 'FREQ-LSR', '')
+                hdulist[0].header.set("CRPIX3", 1.0, "")
+                hdulist[0].header.set("CDELT3", bandwidthmhz * 1e6, "")
+                hdulist[0].header.set("CRVAL3", self.freq[0], "")
+                hdulist[0].header.set("CUNIT3", "      HZ", "")
+                hdulist[0].header.set("CTYPE3", "FREQ-LSR", "")
             else:
                 if ifreq is None:
-                    hdulist[0].header.set('CRPIX3', 1.0, '')
-                    hdulist[0].header.set('CDELT3', (self.freq[1] - self.freq[0]), '')
-                    hdulist[0].header.set('CRVAL3', self.freq[0], '')
-                    hdulist[0].header.set('CUNIT3', '      HZ', '')
-                    hdulist[0].header.set('CTYPE3', 'FREQ-LSR', '')
+                    hdulist[0].header.set("CRPIX3", 1.0, "")
+                    hdulist[0].header.set("CDELT3", (self.freq[1] - self.freq[0]), "")
+                    hdulist[0].header.set("CRVAL3", self.freq[0], "")
+                    hdulist[0].header.set("CUNIT3", "      HZ", "")
+                    hdulist[0].header.set("CTYPE3", "FREQ-LSR", "")
                 else:
-                    hdulist[0].header.set('CRPIX3', 1.0, '')
-                    hdulist[0].header.set('CDELT3', bandwidthmhz * 1e6, '')
-                    hdulist[0].header.set('CRVAL3', self.freq[ifreq], '')
-                    hdulist[0].header.set('CUNIT3', '      HZ', '')
-                    hdulist[0].header.set('CTYPE3', 'FREQ-LSR', '')
+                    hdulist[0].header.set("CRPIX3", 1.0, "")
+                    hdulist[0].header.set("CDELT3", bandwidthmhz * 1e6, "")
+                    hdulist[0].header.set("CRVAL3", self.freq[ifreq], "")
+                    hdulist[0].header.set("CUNIT3", "      HZ", "")
+                    hdulist[0].header.set("CTYPE3", "FREQ-LSR", "")
                 if spectral_axis_vel is True:
-                    hdulist[0].header.set('CRPIX3', (self.nwav + 1.0)/2.0, '')
-                    hdulist[0].header.set('CDELT3', delta_v_ms, '')
-                    hdulist[0].header.set('CRVAL3', velocityCenter_kms * 1.0e3)
+                    hdulist[0].header.set("CRPIX3", (self.nwav + 1.0) / 2.0, "")
+                    hdulist[0].header.set("CDELT3", delta_v_ms, "")
+                    hdulist[0].header.set("CRVAL3", velocityCenter_kms * 1.0e3)
 
-                    hdulist[0].header.set('CRTYPE3', 'VELO-LSR', '')
-                    hdulist[0].header.set('CUNIT3', '     m/s', '')
-                    
-                    
+                    hdulist[0].header.set("CRTYPE3", "VELO-LSR", "")
+                    hdulist[0].header.set("CUNIT3", "     m/s", "")
+
         if nu0 > 0:
-            hdulist[0].header.set('RESTFRQ', nu0, '')
+            hdulist[0].header.set("RESTFRQ", nu0, "")
         else:
             if self.nwav == 1:
-                hdulist[0].header.set('RESTFRQ', self.freq[0], '')
+                hdulist[0].header.set("RESTFRQ", self.freq[0], "")
 
         if len(self.fwhm) == 0:
-            hdulist[0].header.set('BUNIT', 'JY/PIXEL', '')
+            hdulist[0].header.set("BUNIT", "JY/PIXEL", "")
         else:
-            hdulist[0].header.set('BUNIT', 'JY/BEAM', '')
-            hdulist[0].header.set('BMAJ', self.fwhm[0] / 3600., '')
-            hdulist[0].header.set('BMIN', self.fwhm[1] / 3600., '')
-            hdulist[0].header.set('BPA', -self.pa, '')
+            hdulist[0].header.set("BUNIT", "JY/BEAM", "")
+            hdulist[0].header.set("BMAJ", self.fwhm[0] / 3600.0, "")
+            hdulist[0].header.set("BMIN", self.fwhm[1] / 3600.0, "")
+            hdulist[0].header.set("BPA", -self.pa, "")
 
-        hdulist[0].header.set('BTYPE', 'INTENSITY', '')
-        hdulist[0].header.set('BZERO', 0.0, '')
-        hdulist[0].header.set('BSCALE', 1.0, '')
+        hdulist[0].header.set("BTYPE", "INTENSITY", "")
+        hdulist[0].header.set("BZERO", 0.0, "")
+        hdulist[0].header.set("BSCALE", 1.0, "")
 
-        hdulist[0].header.set('EPOCH', 2000.0, '')
-        hdulist[0].header.set('LONPOLE', 180.0, '')
+        hdulist[0].header.set("EPOCH", 2000.0, "")
+        hdulist[0].header.set("LONPOLE", 180.0, "")
 
         if fitsheadkeys:
             if len(fitsheadkeys.keys()) > 0:
                 for ikey in fitsheadkeys.keys():
                     # hdulist[0].header.update(ikey, fitsheadkeys[ikey], '')
-                    hdulist[0].header.set(ikey, fitsheadkeys[ikey], '')
+                    hdulist[0].header.set(ikey, fitsheadkeys[ikey], "")
 
         if os.path.exists(fname):
-            print(fname + ' already exists')
-            dum = input('Do you want to overwrite it (yes/no)?')
-            if (dum.strip()[0] == 'y') | (dum.strip()[0] == 'Y'):
+            print(fname + " already exists")
+            dum = input("Do you want to overwrite it (yes/no)?")
+            if (dum.strip()[0] == "y") | (dum.strip()[0] == "Y"):
                 os.remove(fname)
                 hdu.writeto(fname)
             else:
-                print('No image has been written')
+                print("No image has been written")
         else:
             hdu.writeto(fname)
             # --------------------------------------------------------------------------------------------------
 
-    def plotMomentMap(self, moment=0, nu0=None, wav0=None, dpc=1., au=False, arcsec=False, cmap=None, vclip=None, Tb=False):
+    def plotMomentMap(
+        self,
+        moment=0,
+        nu0=None,
+        wav0=None,
+        dpc=1.0,
+        au=False,
+        arcsec=False,
+        cmap=None,
+        vclip=None,
+        Tb=False,
+    ):
         """Plots moment maps
 
         Parameters
@@ -596,15 +658,20 @@ class radmc3dImage(object):
         # I/O error handling
         if nu0 is None:
             if wav0 is None:
-                msg = 'Unknown nu0 and wav0. Neither the rest frequency (nu0) nor the rest wavelength (wav0)'\
-                      + ' of the line is specified.'
+                msg = (
+                    "Unknown nu0 and wav0. Neither the rest frequency (nu0) nor the rest wavelength (wav0)"
+                    + " of the line is specified."
+                )
                 raise ValueError(msg)
             else:
                 nu0 = nc.cc / wav0 * 1e4
 
         if len(self.image.shape) != 3:
-            msg = 'Wrong image shape. Channel map calculation requires a three dimensional array with '\
-                  + '[Nx,  Ny,  Nnu] dimensions. The current image has the shape of ' + str(len(self.image.shape))
+            msg = (
+                "Wrong image shape. Channel map calculation requires a three dimensional array with "
+                + "[Nx,  Ny,  Nnu] dimensions. The current image has the shape of "
+                + str(len(self.image.shape))
+            )
             raise ValueError(msg)
         mmap = self.getMomentMap(moment=moment, nu0=nu0, wav0=wav0, Tb=Tb)
 
@@ -618,8 +685,8 @@ class radmc3dImage(object):
         if au:
             x = self.x / nc.au
             y = self.y / nc.au
-            xlab = 'X [AU]'
-            ylab = 'Y [AU]'
+            xlab = "X [AU]"
+            ylab = "Y [AU]"
         elif arcsec:
             x = self.x / nc.au / dpc
             y = self.y / nc.au / dpc
@@ -628,30 +695,30 @@ class radmc3dImage(object):
         else:
             x = self.x
             y = self.y
-            xlab = 'X [cm]'
-            ylab = 'Y [cm]'
+            xlab = "X [cm]"
+            ylab = "Y [cm]"
 
         ext = (x[0], x[self.nx - 1], y[0], y[self.ny - 1])
 
-        cb_label = ''
+        cb_label = ""
         if moment == 0:
             mmap = mmap / (dpc * dpc)
             if Tb:
-                cb_label = 'Integrated Intensity [K km/s]'
+                cb_label = "Integrated Intensity [K km/s]"
             else:
-                cb_label = 'Integrated Intensity [erg/s/cm/cm/Hz/ster*km/s]'
+                cb_label = "Integrated Intensity [erg/s/cm/cm/Hz/ster*km/s]"
 
         if moment == 1:
             mmap = mmap / (dpc * dpc)
-            cb_label = 'v [km/s]'
+            cb_label = "v [km/s]"
         if moment > 1:
             mmap = mmap / (dpc * dpc)
             powex = str(moment)
-            cb_label = r'v$^' + powex + '$ [(km/s)$^' + powex + '$]'
+            cb_label = r"v$^" + powex + "$ [(km/s)$^" + powex + "$]"
 
         if vclip is not None:
             if len(vclip) != 2:
-                msg = 'Wrong shape in vclip. vclip should be a two element list with (clipmin, clipmax)'
+                msg = "Wrong shape in vclip. vclip should be a two element list with (clipmin, clipmax)"
                 raise ValueError(msg)
             else:
                 mmap = mmap.clip(vclip[0], vclip[1])
@@ -677,7 +744,7 @@ class radmc3dImage(object):
         wav0   : float
                  Rest wavelength of the line in micron
 
-        Tb     : If True convert intensity into units of brightness 
+        Tb     : If True convert intensity into units of brightness
                  temperature (K)
 
         Returns
@@ -688,15 +755,20 @@ class radmc3dImage(object):
         # I/O error handling
         if nu0 is None:
             if wav0 is None:
-                msg = 'Unknown nu0 and wav0. Neither the rest frequency (nu0) nor the rest wavelength (wav0)' \
-                      + ' of the line is specified.'
+                msg = (
+                    "Unknown nu0 and wav0. Neither the rest frequency (nu0) nor the rest wavelength (wav0)"
+                    + " of the line is specified."
+                )
                 raise ValueError(msg)
             else:
                 nu0 = nc.cc / wav0 * 1e4
 
         if len(self.image.shape) != 3:
-            msg = 'Wrong image shape. Channel map calculation requires a three dimensional array with '\
-                  + '[Nx,  Ny,  Nnu] dimensions. The current image has the shape of ' + str(len(self.image.shape))
+            msg = (
+                "Wrong image shape. Channel map calculation requires a three dimensional array with "
+                + "[Nx,  Ny,  Nnu] dimensions. The current image has the shape of "
+                + str(len(self.image.shape))
+            )
             raise ValueError(msg)
 
         # First calculate the velocity field
@@ -708,11 +780,15 @@ class radmc3dImage(object):
 
         # Now calculate the moment map
         if Tb:
-           y = self.image * (vmap**moment) * nc.cc**2 / (2 * nu0**2 * nc.kk)
+            y = self.image * (vmap**moment) * nc.cc**2 / (2 * nu0**2 * nc.kk)
         else:
-           y = self.image * (vmap**moment)
+            y = self.image * (vmap**moment)
 
-        dum = np.abs(vmap[:, :, 1:] - vmap[:, :, :-1]) * (y[:, :, 1:] + y[:, :, :-1]) * 0.5
+        dum = (
+            np.abs(vmap[:, :, 1:] - vmap[:, :, :-1])
+            * (y[:, :, 1:] + y[:, :, :-1])
+            * 0.5
+        )
 
         return dum.sum(2)
 
@@ -733,14 +809,12 @@ class radmc3dImage(object):
         """
         if old:
             if fname is None:
-                fname = 'image.dat'
+                fname = "image.dat"
 
             self.filename = fname
-            print('Reading ' + fname)
+            print("Reading " + fname)
 
-
-            with open(fname, 'r') as rfile:
-
+            with open(fname, "r") as rfile:
                 dum = rfile.readline().split()
                 self.nx = int(dum[0])
                 self.ny = int(dum[1])
@@ -750,8 +824,8 @@ class radmc3dImage(object):
                 dum = rfile.readline().split()
                 self.sizepix_x = float(dum[0])
                 self.sizepix_y = float(dum[1])
-                self.wav = np.zeros(self.nwav, dtype=float) - 1.
-                self.freq = np.zeros(self.nwav, dtype=float) - 1.
+                self.wav = np.zeros(self.nwav, dtype=float) - 1.0
+                self.freq = np.zeros(self.nwav, dtype=float) - 1.0
 
                 self.stokes = False
                 self.image = np.zeros([self.nx, self.ny, self.nwav], dtype=np.float64)
@@ -764,7 +838,7 @@ class radmc3dImage(object):
         else:
             if binary:
                 if fname is None:
-                    fname = 'image.bout'
+                    fname = "image.bout"
 
                 self.filename = fname
 
@@ -778,32 +852,34 @@ class radmc3dImage(object):
 
                 self.sizepix_x = dum[4]
                 self.sizepix_y = dum[5]
-                self.wav = dum[6:6 + self.nfreq]
+                self.wav = dum[6 : 6 + self.nfreq]
                 self.freq = nc.cc / self.wav * 1e4
 
                 if iformat == 1:
                     self.stokes = False
-                    self.image = np.reshape(dum[6 + self.nfreq:], [self.nfreq, self.ny, self.nx])
+                    self.image = np.reshape(
+                        dum[6 + self.nfreq :], [self.nfreq, self.ny, self.nx]
+                    )
                     self.image = np.swapaxes(self.image, 0, 2)
                 elif iformat == 3:
                     self.stokes = True
-                    self.image = np.reshape(dum[6 + self.nfreq:], [self.nfreq, 4, self.ny, self.nx])
+                    self.image = np.reshape(
+                        dum[6 + self.nfreq :], [self.nfreq, 4, self.ny, self.nx]
+                    )
                     self.image = np.swapaxes(self.image, 0, 3)
                     self.image = np.swapaxes(self.image, 1, 2)
 
             else:
-
                 # Look for the image file
 
                 if fname is None:
-                    fname = 'image.out'
+                    fname = "image.out"
 
-                print('Reading '+ fname)
+                print("Reading " + fname)
 
                 self.filename = fname
-                with open(fname, 'r') as rfile:
-
-                    dum = ''
+                with open(fname, "r") as rfile:
+                    dum = ""
 
                     # Format number
                     iformat = int(rfile.readline())
@@ -832,7 +908,9 @@ class radmc3dImage(object):
                     if iformat == 1:
                         self.stokes = False
 
-                        self.image = np.zeros([self.nx, self.ny, self.nwav], dtype=np.float64)
+                        self.image = np.zeros(
+                            [self.nx, self.ny, self.nwav], dtype=np.float64
+                        )
                         for iwav in range(self.nwav):
                             # Blank line
                             dum = rfile.readline()
@@ -843,7 +921,9 @@ class radmc3dImage(object):
                     # If we have the full stokes image
                     elif iformat == 3:
                         self.stokes = True
-                        self.image = np.zeros([self.nx, self.ny, 4, self.nwav], dtype=np.float64)
+                        self.image = np.zeros(
+                            [self.nx, self.ny, 4, self.nwav], dtype=np.float64
+                        )
                         for iwav in range(self.nwav):
                             # Blank line
                             dum = rfile.readline()
@@ -857,13 +937,25 @@ class radmc3dImage(object):
                                     self.image[ix, iy, 3, iwav] = float(dum[3])
 
         # Conversion from erg/s/cm/cm/Hz/ster to Jy/pixel
-        conv = self.sizepix_x * self.sizepix_y / nc.pc**2. * 1e23
+        conv = self.sizepix_x * self.sizepix_y / nc.pc**2.0 * 1e23
         self.imageJyppix = self.image * conv
 
-        self.x = ((np.arange(self.nx, dtype=np.float64) + 0.5) - self.nx / 2) * self.sizepix_x
-        self.y = ((np.arange(self.ny, dtype=np.float64) + 0.5) - self.ny / 2) * self.sizepix_y
+        self.x = (
+            (np.arange(self.nx, dtype=np.float64) + 0.5) - self.nx / 2
+        ) * self.sizepix_x
+        self.y = (
+            (np.arange(self.ny, dtype=np.float64) + 0.5) - self.ny / 2
+        ) * self.sizepix_y
 
-    def imConv(self, dpc=1., psfType='gauss', fwhm=None, pa=None, tdiam_prim=8.2, tdiam_sec=0.94):
+    def imConv(
+        self,
+        dpc=1.0,
+        psfType="gauss",
+        fwhm=None,
+        pa=None,
+        tdiam_prim=8.2,
+        tdiam_sec=0.94,
+    ):
         """Convolves a RADMC-3D image with a two dimensional Gaussian psf. The output images will have the same
         brightness units as the input images.
 
@@ -898,8 +990,8 @@ class radmc3dImage(object):
         Returns a radmc3dImage
         """
 
-        dx = self.sizepix_x / nc.au / dpc  #Convert to arcsec given distance
-        dy = self.sizepix_y / nc.au / dpc 
+        dx = self.sizepix_x / nc.au / dpc  # Convert to arcsec given distance
+        dy = self.sizepix_y / nc.au / dpc
         nfreq = self.nfreq
         psf = None
         cimage = None
@@ -907,9 +999,18 @@ class radmc3dImage(object):
         if self.stokes:
             if self.nfreq == 1:
                 # Generate the  psf
-                dum = getPSF(nx=self.nx, ny=self.ny, pscale=[dx, dy], psfType=psfType, fwhm=fwhm, pa=pa,
-                             tdiam_prim=tdiam_prim, tdiam_sec=tdiam_sec, wav=self.wav[0])
-                psf = dum['psf']
+                dum = getPSF(
+                    nx=self.nx,
+                    ny=self.ny,
+                    pscale=[dx, dy],
+                    psfType=psfType,
+                    fwhm=fwhm,
+                    pa=pa,
+                    tdiam_prim=tdiam_prim,
+                    tdiam_sec=tdiam_sec,
+                    wav=self.wav[0],
+                )
+                psf = dum["psf"]
                 f_psf = np.fft.fft2(psf)
 
                 cimage = np.zeros([self.nx, self.ny, 4, 1], dtype=np.float64)
@@ -917,50 +1018,87 @@ class radmc3dImage(object):
                     imag = self.image[:, :, istokes, 0]
                     f_imag = np.fft.fft2(imag)
                     f_cimag = f_psf * f_imag
-                    cimage[:, :, istokes, 0] = np.real(np.fft.ifftshift(np.fft.ifft2(f_cimag)))
+                    cimage[:, :, istokes, 0] = np.real(
+                        np.fft.ifftshift(np.fft.ifft2(f_cimag))
+                    )
             else:
                 # If we have a simple Gaussian PSF it will be wavelength independent so we can take it out from the
                 # frequency loop
-                if psfType.lower().strip() == 'gauss':
+                if psfType.lower().strip() == "gauss":
                     # Generate the wavelength independent gaussian psf
-                    dum = getPSF(nx=self.nx, ny=self.ny, pscale=[dx, dy], psfType=psfType, fwhm=fwhm, pa=pa,
-                                 tdiam_prim=tdiam_prim, tdiam_sec=tdiam_sec, wav=self.wav[0])
-                    psf = dum['psf']
+                    dum = getPSF(
+                        nx=self.nx,
+                        ny=self.ny,
+                        pscale=[dx, dy],
+                        psfType=psfType,
+                        fwhm=fwhm,
+                        pa=pa,
+                        tdiam_prim=tdiam_prim,
+                        tdiam_sec=tdiam_sec,
+                        wav=self.wav[0],
+                    )
+                    psf = dum["psf"]
                     f_psf = np.fft.fft2(psf)
 
-                    cimage = np.zeros([self.nx, self.ny, 4, self.nfreq], dtype=np.float64)
+                    cimage = np.zeros(
+                        [self.nx, self.ny, 4, self.nfreq], dtype=np.float64
+                    )
                     for ifreq in range(nfreq):
                         for istokes in range(4):
                             imag = self.image[:, :, istokes, ifreq]
                             f_imag = np.fft.fft2(imag)
                             f_cimag = f_psf * f_imag
-                            cimage[:, :, istokes, ifreq] = np.real(np.fft.ifftshift(np.fft.ifft2(f_cimag)))
+                            cimage[:, :, istokes, ifreq] = np.real(
+                                np.fft.ifftshift(np.fft.ifft2(f_cimag))
+                            )
 
                 # If we have an Airy-PSF calculated from the aperture size(s) and wavelenght, the PSF will depend
                 # on the frequency so it has to be re-calculated for each wavelength
-                elif psfType.lower().strip() == 'airy':
-                    cimage = np.zeros([self.nx, self.ny, 4, self.nfreq], dtype=np.float64)
+                elif psfType.lower().strip() == "airy":
+                    cimage = np.zeros(
+                        [self.nx, self.ny, 4, self.nfreq], dtype=np.float64
+                    )
                     for ifreq in range(nfreq):
                         # Generate the wavelength-dependent airy-psf
-                        dum = getPSF(nx=self.nx, ny=self.ny, pscale=[dx, dy], psfType=psfType, fwhm=fwhm, pa=pa,
-                                     tdiam_prim=tdiam_prim, tdiam_sec=tdiam_sec, wav=self.wav[ifreq])
-                        psf = dum['psf']
+                        dum = getPSF(
+                            nx=self.nx,
+                            ny=self.ny,
+                            pscale=[dx, dy],
+                            psfType=psfType,
+                            fwhm=fwhm,
+                            pa=pa,
+                            tdiam_prim=tdiam_prim,
+                            tdiam_sec=tdiam_sec,
+                            wav=self.wav[ifreq],
+                        )
+                        psf = dum["psf"]
                         f_psf = np.fft.fft2(psf)
 
                         for istokes in range(4):
                             imag = self.image[:, :, istokes, ifreq]
                             f_imag = np.fft.fft2(imag)
                             f_cimag = f_psf * f_imag
-                            cimage[:, :, istokes, ifreq] = np.real(np.fft.ifftshift(np.fft.ifft2(f_cimag)))
+                            cimage[:, :, istokes, ifreq] = np.real(
+                                np.fft.ifftshift(np.fft.ifft2(f_cimag))
+                            )
 
         else:
             # If we have a simple Gaussian PSF it will be wavelength independent so we can take it out from the
             # frequency loop
-            if psfType.lower().strip() == 'gauss':
+            if psfType.lower().strip() == "gauss":
                 # Generate the wavelength independent gaussian psf
-                dum = getPSF(nx=self.nx, ny=self.ny, pscale=[dx, dy], psfType=psfType, fwhm=fwhm, pa=pa,
-                             tdiam_prim=tdiam_prim, tdiam_sec=tdiam_sec, wav=self.wav[0])
-                psf = dum['psf']
+                dum = getPSF(
+                    nx=self.nx,
+                    ny=self.ny,
+                    pscale=[dx, dy],
+                    psfType=psfType,
+                    fwhm=fwhm,
+                    pa=pa,
+                    tdiam_prim=tdiam_prim,
+                    tdiam_sec=tdiam_sec,
+                    wav=self.wav[0],
+                )
+                psf = dum["psf"]
                 f_psf = np.fft.fft2(psf)
 
                 cimage = np.zeros([self.nx, self.ny, self.nfreq], dtype=np.float64)
@@ -968,23 +1106,36 @@ class radmc3dImage(object):
                     imag = self.image[:, :, ifreq]
                     f_imag = np.fft.fft2(imag)
                     f_cimag = f_psf * f_imag
-                    cimage[:, :, ifreq] = np.real(np.fft.ifftshift(np.fft.ifft2(f_cimag)))
+                    cimage[:, :, ifreq] = np.real(
+                        np.fft.ifftshift(np.fft.ifft2(f_cimag))
+                    )
 
             # If we have an Airy-PSF calculated from the aperture size(s) and wavelenght, the PSF will depend
             # on the frequency so it has to be re-calculated for each wavelength
-            elif psfType.lower().strip() == 'airy':
+            elif psfType.lower().strip() == "airy":
                 cimage = np.zeros([self.nx, self.ny, self.nfreq], dtype=np.float64)
                 for ifreq in range(nfreq):
                     # Generate the wavelength-dependent airy-psf
-                    dum = getPSF(nx=self.nx, ny=self.ny, pscale=[dx, dy], psfType=psfType, fwhm=fwhm, pa=pa,
-                                 tdiam_prim=tdiam_prim, tdiam_sec=tdiam_sec, wav=self.wav[ifreq])
-                    psf = dum['psf']
+                    dum = getPSF(
+                        nx=self.nx,
+                        ny=self.ny,
+                        pscale=[dx, dy],
+                        psfType=psfType,
+                        fwhm=fwhm,
+                        pa=pa,
+                        tdiam_prim=tdiam_prim,
+                        tdiam_sec=tdiam_sec,
+                        wav=self.wav[ifreq],
+                    )
+                    psf = dum["psf"]
                     f_psf = np.fft.fft2(psf)
 
                     imag = self.image[:, :, ifreq]
                     f_imag = np.fft.fft2(imag)
                     f_cimag = f_psf * f_imag
-                    cimage[:, :, ifreq] = np.real(np.fft.ifftshift(np.fft.ifft2(f_cimag)))
+                    cimage[:, :, ifreq] = np.real(
+                        np.fft.ifftshift(np.fft.ifft2(f_cimag))
+                    )
 
         # cimage = squeeze(cimage)
 
@@ -992,7 +1143,7 @@ class radmc3dImage(object):
         res = copy.deepcopy(self)
         res.image = cimage
         # SO It doesn't look like this has been converted from sr to pix properly
-        conv = self.sizepix_x * self.sizepix_y / nc.pc**2. * 1e23
+        conv = self.sizepix_x * self.sizepix_y / nc.pc**2.0 * 1e23
         res.imageJyppix = res.image * conv
 
         res.psf = psf
@@ -1002,7 +1153,7 @@ class radmc3dImage(object):
 
         return res
 
-    def compute_brightness_temperature(self,linear=True):
+    def compute_brightness_temperature(self, linear=True):
         """
         Compute, from the image intensity, the corresponding brightness temperature in Kelvin.
 
@@ -1013,29 +1164,45 @@ class radmc3dImage(object):
                          Planck spectrum. If unset, then compute the true brightness
                          temperature, using the full Planck spectrum.
         """
-        tbright = np.zeros((self.nx,self.ny,self.nfreq))
+        tbright = np.zeros((self.nx, self.ny, self.nfreq))
         for inu in range(self.nfreq):
             freq = self.freq[inu]
             if self.nfreq == 1:
                 if self.stokes:
-                    img = self.image[:,:,0]
+                    img = self.image[:, :, 0]
                 else:
-                    img = self.image[:,:]
+                    img = self.image[:, :]
             else:
                 if self.stokes:
-                    img = self.image[:,:,inu,0]
+                    img = self.image[:, :, inu, 0]
                 else:
-                    img = self.image[:,:,inu]
+                    img = self.image[:, :, inu]
             img = np.squeeze(img)
             if linear:
-                tbright[:,:,inu] = img*(nc.cc**2)/(2*(freq**2)*nc.kk)
+                tbright[:, :, inu] = img * (nc.cc**2) / (2 * (freq**2) * nc.kk)
             else:
-                tbright[:,:,inu] = nc.hh*freq/(nc.kk*np.log(2*nc.hh*freq**3/nc.cc**2*1./img+1.))
+                tbright[:, :, inu] = (
+                    nc.hh
+                    * freq
+                    / (
+                        nc.kk
+                        * np.log(2 * nc.hh * freq**3 / nc.cc**2 * 1.0 / img + 1.0)
+                    )
+                )
         return tbright
 
 
-def getPSF(nx=None, ny=None, psfType='gauss', pscale=None, fwhm=None, pa=None, tdiam_prim=8.2, tdiam_sec=0.94,
-           wav=None):
+def getPSF(
+    nx=None,
+    ny=None,
+    psfType="gauss",
+    pscale=None,
+    fwhm=None,
+    pa=None,
+    tdiam_prim=8.2,
+    tdiam_sec=0.94,
+    wav=None,
+):
     """Calculates a two dimensional Gaussian PSF.
 
     Parameters
@@ -1091,23 +1258,22 @@ def getPSF(nx=None, ny=None, psfType='gauss', pscale=None, fwhm=None, pa=None, t
     if pscale is not None:
         dx, dy = pscale[0], pscale[1]
     else:
-        dx, dy = 1., 1.
+        dx, dy = 1.0, 1.0
 
     x = (np.arange(nx, dtype=np.float64) - nx / 2) * dx
     y = (np.arange(ny, dtype=np.float64) - ny / 2) * dy
 
     # Create the Gaussian PSF
     psf = None
-    if psfType.strip().lower() == 'gauss':
-
+    if psfType.strip().lower() == "gauss":
         # Calculate the standard deviation of the Gaussians
-        sigmax = fwhm[0] / (2.0 * np.sqrt(2.0 * np.log(2.)))
-        sigmay = fwhm[1] / (2.0 * np.sqrt(2.0 * np.log(2.)))
-        norm = (2. * np.pi * sigmax * sigmay) / dx / dy
+        sigmax = fwhm[0] / (2.0 * np.sqrt(2.0 * np.log(2.0)))
+        sigmay = fwhm[1] / (2.0 * np.sqrt(2.0 * np.log(2.0)))
+        norm = (2.0 * np.pi * sigmax * sigmay) / dx / dy
         # Pre-compute sin and cos angles
 
-        sin_pa = np.sin(pa / 180. * np.pi - np.pi / 2.)
-        cos_pa = np.cos(pa / 180. * np.pi - np.pi / 2.)
+        sin_pa = np.sin(pa / 180.0 * np.pi - np.pi / 2.0)
+        cos_pa = np.cos(pa / 180.0 * np.pi - np.pi / 2.0)
 
         # Define the psf
         psf = np.zeros([nx, ny], dtype=np.float64)
@@ -1122,50 +1288,63 @@ def getPSF(nx=None, ny=None, psfType='gauss', pscale=None, fwhm=None, pa=None, t
                 xx = cos_pa_x[ix] - sin_pa_y[iy]
                 yy = sin_pa_x[ix] + cos_pa_y[iy]
 
-                psf[ix, iy] = np.exp(-0.5 * xx * xx / sigmax / sigmax - 0.5 * yy * yy / sigmay / sigmay)
+                psf[ix, iy] = np.exp(
+                    -0.5 * xx * xx / sigmax / sigmax - 0.5 * yy * yy / sigmay / sigmay
+                )
 
         psf /= norm
 
-    elif psfType.strip().lower() == 'airy':
-
+    elif psfType.strip().lower() == "airy":
         # Check whether scipy was successfully imported
         if not spc:
-            msg = 'scipy.special was not imported. PSF calculation is limited to Gaussian only.'
+            msg = "scipy.special was not imported. PSF calculation is limited to Gaussian only."
             raise ImportError(msg)
 
         # Unit conversion
-        x_rad = x / 3600. / 180. * np.pi
-        y_rad = y / 3600. / 180. * np.pi
+        x_rad = x / 3600.0 / 180.0 * np.pi
+        y_rad = y / 3600.0 / 180.0 * np.pi
         x2 = x_rad**2
         y2 = y_rad**2
         wav_m = wav * 1e-6
         psf = np.zeros([nx, ny], dtype=np.float64)
-        if tdiam_sec == 0.:
+        if tdiam_sec == 0.0:
             for ix in range(nx):
                 r = np.sqrt(x2[ix] + y2)
                 u = np.pi / wav_m * tdiam_prim * r
 
-                if 0. in u:
-                    ii = (u == 0.)
+                if 0.0 in u:
+                    ii = u == 0.0
                     u[ii] = 1e-5
-                psf[ix, :] = (2.0 * spc.j1(u) / u)**2
+                psf[ix, :] = (2.0 * spc.j1(u) / u) ** 2
         else:
             for ix in range(nx):
                 r = np.sqrt(x2[ix] + y2)
                 u = np.pi / wav_m * tdiam_prim * r
                 eps = tdiam_sec / tdiam_prim
-                if 0. in u:
-                    ii = (u == 0.)
+                if 0.0 in u:
+                    ii = u == 0.0
                     u[ii] = 1e-5
-                psf[ix, :] = 1.0 / (1.0 - eps**2)**2 * ((2.0 * spc.j1(u) / u)
-                                                        - (eps**2 * 2.0 * spc.j1(eps * u) / (eps * u)))**2
+                psf[ix, :] = (
+                    1.0
+                    / (1.0 - eps**2) ** 2
+                    * (
+                        (2.0 * spc.j1(u) / u)
+                        - (eps**2 * 2.0 * spc.j1(eps * u) / (eps * u))
+                    )
+                    ** 2
+                )
 
-        dum = 0.44 * (wav * 1e-6 / tdiam_prim / np.pi * 180. * 3600.) * 2. * np.sqrt(2. * np.log(2.))
+        dum = (
+            0.44
+            * (wav * 1e-6 / tdiam_prim / np.pi * 180.0 * 3600.0)
+            * 2.0
+            * np.sqrt(2.0 * np.log(2.0))
+        )
         fwhm = [dum, dum]
-        norm = fwhm[0] * fwhm[1] * np.pi / (4. * np.log(2.)) / dx / dy
+        norm = fwhm[0] * fwhm[1] * np.pi / (4.0 * np.log(2.0)) / dx / dy
         psf /= norm
 
-    res = {'psf': psf, 'x': x, 'y': y}
+    res = {"psf": psf, "x": x, "y": y}
 
     return res
 
@@ -1191,7 +1370,17 @@ def readImage(fname=None, binary=False, old=False):
     return dum
 
 
-def plotPolDir(image=None, arcsec=False, au=False, dpc=None, ifreq=0, cmask_rad=None, color='w', nx=20, ny=20):
+def plotPolDir(
+    image=None,
+    arcsec=False,
+    au=False,
+    dpc=None,
+    ifreq=0,
+    cmask_rad=None,
+    color="w",
+    nx=20,
+    ny=20,
+):
     """
     Function to plot the polarisation direction for full stokes images
 
@@ -1235,8 +1424,10 @@ def plotPolDir(image=None, arcsec=False, au=False, dpc=None, ifreq=0, cmask_rad=
     #
 
     if not image.stokes:
-        msg = 'The image is not a full stokes image. Polarisation direction can only be displayed if '\
-              + 'the full stokes vector is present at every pixel of the image'
+        msg = (
+            "The image is not a full stokes image. Polarisation direction can only be displayed if "
+            + "the full stokes vector is present at every pixel of the image"
+        )
         raise ValueError(msg)
 
     if cmask_rad is not None:
@@ -1248,8 +1439,8 @@ def plotPolDir(image=None, arcsec=False, au=False, dpc=None, ifreq=0, cmask_rad=
     if au:
         x = image.x / nc.au
         y = image.y / nc.au
-        xlab = 'X [AU]'
-        ylab = 'Y [AU]'
+        xlab = "X [AU]"
+        ylab = "Y [AU]"
     elif arcsec:
         x = image.x / nc.au / dpc
         y = image.y / nc.au / dpc
@@ -1258,33 +1449,47 @@ def plotPolDir(image=None, arcsec=False, au=False, dpc=None, ifreq=0, cmask_rad=
     else:
         x = image.x
         y = image.y
-        xlab = 'X [cm]'
-        ylab = 'Y [cm]'
+        xlab = "X [cm]"
+        ylab = "Y [cm]"
 
     # ext = (x[0], x[image.nx-1], y[0], y[image.ny-1])
     iix = [int(np.floor(i)) for i in np.arange(nx) * float(x.shape[0]) / nx]
     iiy = [int(np.floor(i)) for i in np.arange(ny) * float(x.shape[0]) / ny]
     xr = x[iix]
     yr = y[iiy]
-    xxr, yyr = np.meshgrid(xr, yr, indexing='ij')
-    qqr = (np.squeeze(dum_image.image[:, :, 1, ifreq])
-           / np.squeeze(dum_image.image[:, :, 0, ifreq]).clip(1e-60))[np.ix_(iix, iiy)]
-    uur = (np.squeeze(dum_image.image[:, :, 2, ifreq])
-           / np.squeeze(dum_image.image[:, :, 0, ifreq]).clip(1e-60))[np.ix_(iix, iiy)]
+    xxr, yyr = np.meshgrid(xr, yr, indexing="ij")
+    qqr = (
+        np.squeeze(dum_image.image[:, :, 1, ifreq])
+        / np.squeeze(dum_image.image[:, :, 0, ifreq]).clip(1e-60)
+    )[np.ix_(iix, iiy)]
+    uur = (
+        np.squeeze(dum_image.image[:, :, 2, ifreq])
+        / np.squeeze(dum_image.image[:, :, 0, ifreq]).clip(1e-60)
+    )[np.ix_(iix, iiy)]
     lpol = np.sqrt(qqr**2 + uur**2).clip(1e-60)
     qqr /= lpol
     uur /= lpol
     ang = np.arccos(qqr) / 2.0
-    ii = (uur < 0)
+    ii = uur < 0
     if True in ii:
         ang[ii] = np.pi - ang[ii]
     vx = np.cos(ang)
     vy = np.sin(ang)
-    ii = (lpol < 1e-6)
+    ii = lpol < 1e-6
     vx[ii] = 0.001
     vy[ii] = 0.001
-    plt.quiver(xxr, yyr, vx, vy, color=color, pivot='mid', scale=2. * np.max([nx, ny]), headwidth=1e-10,
-               headlength=1e-10, headaxislength=1e-10)
+    plt.quiver(
+        xxr,
+        yyr,
+        vx,
+        vy,
+        color=color,
+        pivot="mid",
+        scale=2.0 * np.max([nx, ny]),
+        headwidth=1e-10,
+        headlength=1e-10,
+        headaxislength=1e-10,
+    )
 
     plt.xlabel(xlab)
     plt.ylabel(ylab)
@@ -1292,9 +1497,28 @@ def plotPolDir(image=None, arcsec=False, au=False, dpc=None, ifreq=0, cmask_rad=
     return
 
 
-def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=None, saturate=None, bunit='norm',
-              ifreq=0, cmask_rad=None, interpolation='nearest', cmap=plt.cm.gist_gray, stokes='I',
-              fig=None, ax=None, projection='polar', deg=True, rmax=None, rlog=True, **kwargs):
+def plotImage(
+    image=None,
+    arcsec=False,
+    au=False,
+    log=False,
+    dpc=None,
+    maxlog=None,
+    saturate=None,
+    bunit="norm",
+    ifreq=0,
+    cmask_rad=None,
+    interpolation="nearest",
+    cmap=plt.cm.gist_gray,
+    stokes="I",
+    fig=None,
+    ax=None,
+    projection="polar",
+    deg=True,
+    rmax=None,
+    rlog=True,
+    **kwargs
+):
     """Plots a radmc3d image.
 
 
@@ -1384,70 +1608,93 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
     """
 
     if isinstance(image, radmc3dImage):
-
         # Check whether or not we need to mask the image
 
         dum_image = copy.deepcopy(image)
         if dum_image.stokes:
-            if stokes.strip().upper() == 'I':
+            if stokes.strip().upper() == "I":
                 if dum_image.nwav == 1:
                     dum_image.image = image.image[:, :, 0]
                 else:
                     dum_image.image = image.image[:, :, 0, :]
 
-            if stokes.strip().upper() == 'Q':
+            if stokes.strip().upper() == "Q":
                 if dum_image.nwav == 1:
                     dum_image.image = image.image[:, :, 1]
                 else:
                     dum_image.image = image.image[:, :, 1, :]
 
-            if stokes.strip().upper() == 'U':
+            if stokes.strip().upper() == "U":
                 if dum_image.nwav == 1:
                     dum_image.image = image.image[:, :, 2]
                 else:
                     dum_image.image = image.image[:, :, 2, :]
 
-            if stokes.strip().upper() == 'V':
+            if stokes.strip().upper() == "V":
                 if dum_image.nwav == 1:
                     dum_image.image = image.image[:, :, 3]
                 else:
                     dum_image.image = image.image[:, :, 3, :]
 
-            if stokes.strip().upper() == 'PI':
+            if stokes.strip().upper() == "PI":
                 if dum_image.nwav == 1:
                     dum_image.image = np.sqrt(
-                        image.image[:, :, 1]**2 + image.image[:, :, 2]**2 + image.image[:, :, 3]**2)
+                        image.image[:, :, 1] ** 2
+                        + image.image[:, :, 2] ** 2
+                        + image.image[:, :, 3] ** 2
+                    )
                 else:
                     dum_image.image = np.sqrt(
-                        image.image[:, :, 1, :]**2 + image.image[:, :, 2, :]**2 + image.image[:, :, 3, :]**2)
+                        image.image[:, :, 1, :] ** 2
+                        + image.image[:, :, 2, :] ** 2
+                        + image.image[:, :, 3, :] ** 2
+                    )
 
-            if stokes.strip().upper() == 'P':
+            if stokes.strip().upper() == "P":
+                if dum_image.nwav == 1:
+                    dum_image.image = (
+                        np.sqrt(
+                            image.image[:, :, 1] ** 2
+                            + image.image[:, :, 2] ** 2
+                            + image.image[:, :, 3] ** 2
+                        )
+                        / image.image[:, :, 0]
+                    )
+
+                else:
+                    dum_image.image = (
+                        np.sqrt(
+                            image.image[:, :, 1, :] ** 2
+                            + image.image[:, :, 2, :] ** 2
+                            + image.image[:, :, 3, :] ** 2
+                        )
+                        / image.image[:, :, 0, :]
+                    )
+
+            if stokes.strip().upper() == "PIL":
                 if dum_image.nwav == 1:
                     dum_image.image = np.sqrt(
-                        image.image[:, :, 1]**2 + image.image[:, :, 2]**2 + image.image[:, :, 3]**2) / \
-                                      image.image[:, :, 0]
-
+                        image.image[:, :, 1] ** 2 + image.image[:, :, 2] ** 2
+                    )
                 else:
                     dum_image.image = np.sqrt(
-                        image.image[:, :, 1, :]**2 + image.image[:, :, 2, :]**2 + image.image[:, :, 3, :]**2) / \
-                                      image.image[:, :, 0, :]
+                        image.image[:, :, 1, :] ** 2 + image.image[:, :, 2, :] ** 2
+                    )
 
-            if stokes.strip().upper() == 'PIL':
+            if stokes.strip().upper() == "PL":
                 if dum_image.nwav == 1:
-                    dum_image.image = np.sqrt(
-                        image.image[:, :, 1]**2 + image.image[:, :, 2]**2)
-                else:
-                    dum_image.image = np.sqrt(
-                        image.image[:, :, 1, :]**2 + image.image[:, :, 2, :]**2)
-
-            if stokes.strip().upper() == 'PL':
-                if dum_image.nwav == 1:
-                    dum_image.image = np.sqrt(
-                        image.image[:, :, 1]**2 + image.image[:, :, 2]**2) / image.image[:, :, 0]
+                    dum_image.image = (
+                        np.sqrt(image.image[:, :, 1] ** 2 + image.image[:, :, 2] ** 2)
+                        / image.image[:, :, 0]
+                    )
 
                 else:
-                    dum_image.image = np.sqrt(
-                        image.image[:, :, 1, :]**2 + image.image[:, :, 2, :]**2) / image.image[:, :, 0, :]
+                    dum_image.image = (
+                        np.sqrt(
+                            image.image[:, :, 1, :] ** 2 + image.image[:, :, 2, :] ** 2
+                        )
+                        / image.image[:, :, 0, :]
+                    )
 
         if cmask_rad is not None:
             dum_image = cmask(dum_image, rad=cmask_rad, au=au, arcsec=arcsec, dpc=dpc)
@@ -1459,13 +1706,13 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
         data = np.squeeze(dum_image.image[:, ::-1, ifreq].T)
 
         norm = data.max()
-        if bunit == 'norm':
+        if bunit == "norm":
             data = data / norm
 
         clipnorm = data.max()
         # Check if the data should be plotted on a log scale
         if log:
-            clipmin = np.log10(data[data > 0.].min())
+            clipmin = np.log10(data[data > 0.0].min())
             data = np.log10(data.clip(1e-90))
 
             # Clipping the data
@@ -1475,7 +1722,7 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
             clipmin = data.min()
 
         if saturate is not None:
-            if saturate > 1.:
+            if saturate > 1.0:
                 saturate = 1.0
             if log:
                 clipmax = np.log10(saturate) + np.log10(clipnorm)
@@ -1488,62 +1735,74 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
 
         # Select the unit of the data
 
-        if bunit.lower() == 'norm':
+        if bunit.lower() == "norm":
             if log:
-                cb_label = 'log(I' + r'$_\nu$' + '/max(I' + r'$_\nu$' + '))'
+                cb_label = "log(I" + r"$_\nu$" + "/max(I" + r"$_\nu$" + "))"
             else:
-                cb_label = 'I' + r'$_\nu$' + '/max(I' + r'$_\nu$' + ')'
-        elif bunit.lower() == 'inu':
+                cb_label = "I" + r"$_\nu$" + "/max(I" + r"$_\nu$" + ")"
+        elif bunit.lower() == "inu":
             if log:
-                cb_label = 'log(I' + r'$_\nu$' + ' [erg/s/cm/cm/Hz/ster])'
+                cb_label = "log(I" + r"$_\nu$" + " [erg/s/cm/cm/Hz/ster])"
             else:
-                cb_label = 'I' + r'$_\nu$' + ' [erg/s/cm/cm/Hz/ster]'
+                cb_label = "I" + r"$_\nu$" + " [erg/s/cm/cm/Hz/ster]"
 
-        elif (bunit.lower() == 'snu') | (bunit.lower() == 'jy/pixel'):
+        elif (bunit.lower() == "snu") | (bunit.lower() == "jy/pixel"):
             if dpc is None:
-                msg = 'Unknown dpc. If Jy/pixel is selected for the image unit the dpc keyword should also be set'
+                msg = "Unknown dpc. If Jy/pixel is selected for the image unit the dpc keyword should also be set"
                 raise ValueError(msg)
             else:
                 if log:
-                    data = data + np.log10(image.sizepix_x * image.sizepix_y / (dpc * nc.pc)**2. * 1e23)
-                    cb_label = 'log(S' + r'$_\nu$' + '[Jy/pixel])'
+                    data = data + np.log10(
+                        image.sizepix_x * image.sizepix_y / (dpc * nc.pc) ** 2.0 * 1e23
+                    )
+                    cb_label = "log(S" + r"$_\nu$" + "[Jy/pixel])"
                 else:
-                    data = data * (image.sizepix_x * image.sizepix_y / (dpc * nc.pc)**2. * 1e23)
-                    cb_label = 'S' + r'$_\nu$' + ' [Jy/pixel]'
+                    data = data * (
+                        image.sizepix_x * image.sizepix_y / (dpc * nc.pc) ** 2.0 * 1e23
+                    )
+                    cb_label = "S" + r"$_\nu$" + " [Jy/pixel]"
 
-        elif bunit.lower() == 'jy/beam':
+        elif bunit.lower() == "jy/beam":
             if len(image.fwhm) == 0:
-                msg = 'The image does not appear to be convolved with a Gaussain (fwhm data attribute is empty). ' \
-                      'The intensity unit can only be converted to Jy/beam if the convolving beam size is known'
+                msg = (
+                    "The image does not appear to be convolved with a Gaussain (fwhm data attribute is empty). "
+                    "The intensity unit can only be converted to Jy/beam if the convolving beam size is known"
+                )
                 raise ValueError(msg)
 
-            pixel_area = (image.sizepix_x * image.sizepix_y)/(dpc * nc.pc)**2 * (180./np.pi*3600.)**2
-            beam_area = image.fwhm[0] * image.fwhm[1] * np.pi / 4. / np.log(2.0)
+            pixel_area = (
+                (image.sizepix_x * image.sizepix_y)
+                / (dpc * nc.pc) ** 2
+                * (180.0 / np.pi * 3600.0) ** 2
+            )
+            beam_area = image.fwhm[0] * image.fwhm[1] * np.pi / 4.0 / np.log(2.0)
 
             if log:
                 # Convert data to Jy/pixel
-                data += np.log10((image.sizepix_x * image.sizepix_y / (dpc * nc.pc)**2. * 1e23))
+                data += np.log10(
+                    (image.sizepix_x * image.sizepix_y / (dpc * nc.pc) ** 2.0 * 1e23)
+                )
                 # Convert data to Jy/beam
                 data += np.log10(beam_area / pixel_area)
 
-                cb_label = 'log(S' + r'$_\nu$' + '[Jy/beam])'
+                cb_label = "log(S" + r"$_\nu$" + "[Jy/beam])"
             else:
                 # Convert data to Jy/pixel
-                data *= (image.sizepix_x * image.sizepix_y / (dpc * nc.pc)**2. * 1e23)
+                data *= image.sizepix_x * image.sizepix_y / (dpc * nc.pc) ** 2.0 * 1e23
                 # Convert data to Jy/beam
                 data *= beam_area / pixel_area
-                cb_label = 'S' + r'$_\nu$' + ' [Jy/beam]'
+                cb_label = "S" + r"$_\nu$" + " [Jy/beam]"
 
         else:
-            msg = 'Unknown bunit: ' + bunit + ' Allowed values are "norm", "inu", "snu"'
+            msg = "Unknown bunit: " + bunit + ' Allowed values are "norm", "inu", "snu"'
             raise ValueError(msg)
 
         # Select the coordinates of the data
         if au:
             x = image.x / nc.au
             y = image.y / nc.au
-            xlab = 'X [AU]'
-            ylab = 'Y [AU]'
+            xlab = "X [AU]"
+            ylab = "Y [AU]"
         elif arcsec:
             x = image.x / nc.au / dpc
             y = image.y / nc.au / dpc
@@ -1552,8 +1811,8 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
         else:
             x = image.x
             y = image.y
-            xlab = 'X [cm]'
-            ylab = 'Y [cm]'
+            xlab = "X [cm]"
+            ylab = "Y [cm]"
 
         ext = (x[0], x[image.nx - 1], y[0], y[image.ny - 1])
 
@@ -1561,79 +1820,104 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
         plt.delaxes()
         plt.delaxes()
 
-        implot = plt.imshow(data, extent=ext, cmap=cmap, interpolation=interpolation, **kwargs)
+        implot = plt.imshow(
+            data, extent=ext, cmap=cmap, interpolation=interpolation, **kwargs
+        )
         plt.xlabel(xlab)
         plt.ylabel(ylab)
-        plt.title(r'$\lambda$=' + ("%.5f" % image.wav[ifreq]) + r'$\mu$m')
+        plt.title(r"$\lambda$=" + ("%.5f" % image.wav[ifreq]) + r"$\mu$m")
         cbar = plt.colorbar(implot)
         cbar.set_label(cb_label)
         plt.show()
 
     elif isinstance(image, radmc3dCircimage):
-
         # Check whether or not we need to mask the image
 
         dum_image = copy.deepcopy(image)
         if dum_image.stokes:
-            if stokes.strip().upper() == 'I':
+            if stokes.strip().upper() == "I":
                 if dum_image.nwav == 1:
                     dum_image.image = image.image[:, :, 0]
                 else:
                     dum_image.image = image.image[:, :, 0, :]
 
-            if stokes.strip().upper() == 'Q':
+            if stokes.strip().upper() == "Q":
                 if dum_image.nwav == 1:
                     dum_image.image = image.image[:, :, 1]
                 else:
                     dum_image.image = image.image[:, :, 1, :]
 
-            if stokes.strip().upper() == 'U':
+            if stokes.strip().upper() == "U":
                 if dum_image.nwav == 1:
                     dum_image.image = image.image[:, :, 2]
                 else:
                     dum_image.image = image.image[:, :, 2, :]
 
-            if stokes.strip().upper() == 'V':
+            if stokes.strip().upper() == "V":
                 if dum_image.nwav == 1:
                     dum_image.image = image.image[:, :, 3]
                 else:
                     dum_image.image = image.image[:, :, 3, :]
 
-            if stokes.strip().upper() == 'PI':
+            if stokes.strip().upper() == "PI":
                 if dum_image.nwav == 1:
                     dum_image.image = np.sqrt(
-                        image.image[:, :, 1]**2 + image.image[:, :, 2]**2 + image.image[:, :, 3]**2)
+                        image.image[:, :, 1] ** 2
+                        + image.image[:, :, 2] ** 2
+                        + image.image[:, :, 3] ** 2
+                    )
                 else:
                     dum_image.image = np.sqrt(
-                        image.image[:, :, 1, :]**2 + image.image[:, :, 2, :]**2 + image.image[:, :, 3, :]**2)
+                        image.image[:, :, 1, :] ** 2
+                        + image.image[:, :, 2, :] ** 2
+                        + image.image[:, :, 3, :] ** 2
+                    )
 
-            if stokes.strip().upper() == 'P':
+            if stokes.strip().upper() == "P":
+                if dum_image.nwav == 1:
+                    dum_image.image = (
+                        np.sqrt(
+                            image.image[:, :, 1] ** 2
+                            + image.image[:, :, 2] ** 2
+                            + image.image[:, :, 3] ** 2
+                        )
+                        / image.image[:, :, 0]
+                    )
+
+                else:
+                    dum_image.image = (
+                        np.sqrt(
+                            image.image[:, :, 1, :] ** 2
+                            + image.image[:, :, 2, :] ** 2
+                            + image.image[:, :, 3, :] ** 2
+                        )
+                        / image.image[:, :, 0, :]
+                    )
+
+            if stokes.strip().upper() == "PIL":
                 if dum_image.nwav == 1:
                     dum_image.image = np.sqrt(
-                        image.image[:, :, 1]**2 + image.image[:, :, 2]**2 + image.image[:, :, 3]**2) / \
-                                      image.image[:, :, 0]
-
+                        image.image[:, :, 1] ** 2 + image.image[:, :, 2] ** 2
+                    )
                 else:
                     dum_image.image = np.sqrt(
-                        image.image[:, :, 1, :]**2 + image.image[:, :, 2, :]**2 + image.image[:, :, 3, :]**2) / \
-                                      image.image[:, :, 0, :]
+                        image.image[:, :, 1, :] ** 2 + image.image[:, :, 2, :] ** 2
+                    )
 
-            if stokes.strip().upper() == 'PIL':
+            if stokes.strip().upper() == "PL":
                 if dum_image.nwav == 1:
-                    dum_image.image = np.sqrt(
-                        image.image[:, :, 1]**2 + image.image[:, :, 2]**2)
-                else:
-                    dum_image.image = np.sqrt(
-                        image.image[:, :, 1, :]**2 + image.image[:, :, 2, :]**2)
-
-            if stokes.strip().upper() == 'PL':
-                if dum_image.nwav == 1:
-                    dum_image.image = np.sqrt(
-                        image.image[:, :, 1]**2 + image.image[:, :, 2]**2) / image.image[:, :, 0]
+                    dum_image.image = (
+                        np.sqrt(image.image[:, :, 1] ** 2 + image.image[:, :, 2] ** 2)
+                        / image.image[:, :, 0]
+                    )
 
                 else:
-                    dum_image.image = np.sqrt(
-                        image.image[:, :, 1, :]**2 + image.image[:, :, 2, :]**2) / image.image[:, :, 0, :]
+                    dum_image.image = (
+                        np.sqrt(
+                            image.image[:, :, 1, :] ** 2 + image.image[:, :, 2, :] ** 2
+                        )
+                        / image.image[:, :, 0, :]
+                    )
         else:
             dum_image.image = image.image[:, :, 0, :]
 
@@ -1644,20 +1928,24 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
             if arcsec:
                 cmask_rad_cm = cmask_rad * dpc * nc.pc
 
-            ii = (dum_image.ri <= cmask_rad_cm)
+            ii = dum_image.ri <= cmask_rad_cm
 
             if len(dum_image.image.shape) == 3:
-                dum_image.image[ii, :, :] = 0.
+                dum_image.image[ii, :, :] = 0.0
 
             elif len(dum_image.image.shape) == 4:
-                dum_image.image[ii, :, :, :] = 0.
+                dum_image.image[ii, :, :, :] = 0.0
 
         if ifreq is None:
             ifreq = 0
 
-        if bunit == 'snu':
+        if bunit == "snu":
             if dpc is None:
-                msg = 'Unknown bunit: ' + bunit + ' Allowed values are "norm", "inu", "snu"'
+                msg = (
+                    "Unknown bunit: "
+                    + bunit
+                    + ' Allowed values are "norm", "inu", "snu"'
+                )
                 raise ValueError(msg)
             else:
                 psize = image.getPixelSize()
@@ -1667,13 +1955,13 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
             data = dum_image.image[:, :, ifreq]
 
         norm = data.max()
-        if bunit == 'norm':
+        if bunit == "norm":
             data = data / norm
 
         clipnorm = data.max()
         # Check if the data should be plotted on a log scale
         if log:
-            clipmin = np.log10(data[data > 0.].min())
+            clipmin = np.log10(data[data > 0.0].min())
             data = np.log10(data.clip(1e-90))
 
             # Clipping the data
@@ -1683,7 +1971,7 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
             clipmin = data.min()
 
         if saturate is not None:
-            if saturate > 1.:
+            if saturate > 1.0:
                 saturate = 1.0
             if log:
                 clipmax = np.log10(saturate) + np.log10(clipnorm)
@@ -1696,43 +1984,43 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
 
         # Select the unit of the data
 
-        if bunit == 'norm':
+        if bunit == "norm":
             if log:
-                cb_label = 'log(I' + r'$_\nu$' + '/max(I' + r'$_\nu$' + '))'
+                cb_label = "log(I" + r"$_\nu$" + "/max(I" + r"$_\nu$" + "))"
             else:
-                cb_label = 'I' + r'$_\nu$' + '/max(I' + r'$_\nu$' + ')'
-        elif bunit == 'inu':
+                cb_label = "I" + r"$_\nu$" + "/max(I" + r"$_\nu$" + ")"
+        elif bunit == "inu":
             if log:
-                cb_label = 'log(I' + r'$_\nu$' + ' [erg/s/cm/cm/Hz/ster])'
+                cb_label = "log(I" + r"$_\nu$" + " [erg/s/cm/cm/Hz/ster])"
             else:
-                cb_label = 'I' + r'$_\nu$' + ' [erg/s/cm/cm/Hz/ster]'
-        elif bunit == 'snu':
+                cb_label = "I" + r"$_\nu$" + " [erg/s/cm/cm/Hz/ster]"
+        elif bunit == "snu":
             if log:
-                cb_label = 'log(S' + r'$_\nu$' + '[Jy/pixel])'
+                cb_label = "log(S" + r"$_\nu$" + "[Jy/pixel])"
             else:
-                cb_label = 'S' + r'$_\nu$' + ' [Jy/pixel]'
+                cb_label = "S" + r"$_\nu$" + " [Jy/pixel]"
 
         else:
-            msg = 'Unknown bunit: ' + bunit + ' Allowed values are "norm", "inu", "snu"'
+            msg = "Unknown bunit: " + bunit + ' Allowed values are "norm", "inu", "snu"'
             raise ValueError(msg)
 
         # Select the coordinates of the data
         x = image.phii
-        xlab = 'Azimuth angle [rad]'
-        if projection == 'cartesian':
+        xlab = "Azimuth angle [rad]"
+        if projection == "cartesian":
             if deg:
-                x = image.phii / np.pi * 180.
-                xlab = 'Azimuth angle [deg]'
+                x = image.phii / np.pi * 180.0
+                xlab = "Azimuth angle [deg]"
 
         if au:
             y = image.rc / 1.496e13
-            ylab = 'R [AU]'
+            ylab = "R [AU]"
         elif arcsec:
             y = image.rc / 1.496e13 / dpc
-            ylab = 'R [arcsec]'
+            ylab = "R [arcsec]"
         else:
             y = image.rc
-            ylab = 'R [cm]'
+            ylab = "R [cm]"
 
         if rmax is None:
             rmax = x.max()
@@ -1740,12 +2028,12 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
         if fig is None:
             fig = plt.figure()
 
-        if projection == 'polar':
-            ax = fig.add_subplot(111, projection='polar')
+        if projection == "polar":
+            ax = fig.add_subplot(111, projection="polar")
             implot = plt.pcolormesh(x, y, data, **kwargs)
             ax.set_rmax(rmax)
 
-        elif projection == 'cartesian':
+        elif projection == "cartesian":
             if ax is not None:
                 plt.sca(ax)
 
@@ -1753,7 +2041,7 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
             plt.xlim(x[0], x[-1])
             plt.ylim(y[0], y[-1])
             if rlog:
-                plt.yscale('log')
+                plt.yscale("log")
         else:
             msg = 'Unknown projection. Accepted values for projection keyword are "polar" or "cartesian".'
             raise ValueError(msg)
@@ -1764,13 +2052,30 @@ def plotImage(image=None, arcsec=False, au=False, log=False, dpc=None, maxlog=No
         cbar.set_label(cb_label)
         plt.show()
 
-    return {'implot': implot, 'cbar': cbar}
+    return {"implot": implot, "cbar": cbar}
 
 
-def makeImage(npix=None, incl=None, wav=None, sizeau=None, phi=None, posang=None, pointau=None,
-              fluxcons=True, nostar=False, noscat=False,
-              widthkms=None, linenlam=None, vkms=None, iline=None,
-              lambdarange=None, nlam=None, stokes=False, binary=False, setthreads=None):
+def makeImage(
+    npix=None,
+    incl=None,
+    wav=None,
+    sizeau=None,
+    phi=None,
+    posang=None,
+    pointau=None,
+    fluxcons=True,
+    nostar=False,
+    noscat=False,
+    widthkms=None,
+    linenlam=None,
+    vkms=None,
+    iline=None,
+    lambdarange=None,
+    nlam=None,
+    stokes=False,
+    binary=False,
+    setthreads=None,
+):
     """Calculates a rectangular image with RADMC-3D
 
     Parameters
@@ -1850,101 +2155,123 @@ def makeImage(npix=None, incl=None, wav=None, sizeau=None, phi=None, posang=None
     # The basic keywords that should be set
     #
     if npix is None:
-        msg = 'Unkonwn npix. Number of pixels must be set.'
+        msg = "Unkonwn npix. Number of pixels must be set."
         raise ValueError(msg)
 
     if incl is None:
-        msg = 'Unkonwn incl. Inclination angle must be set.'
+        msg = "Unkonwn incl. Inclination angle must be set."
         raise ValueError(msg)
 
     if wav is None:
         if (lambdarange is None) & (nlam is None):
             if vkms is None:
                 if (widthkms is None) & (linenlam is None):
-                    msg = 'Neither wavelength nor velocity is specified at which the image should be calculated'
+                    msg = "Neither wavelength nor velocity is specified at which the image should be calculated"
                     raise ValueError(msg)
                 else:
                     if iline is None:
-                        msg = 'Unknown iline. widthkms, linenlam keywords are set indicating that a line '\
-                              + 'channel map should be calculated, but the iline keyword is not specified'
+                        msg = (
+                            "Unknown iline. widthkms, linenlam keywords are set indicating that a line "
+                            + "channel map should be calculated, but the iline keyword is not specified"
+                        )
                         raise ValueError(msg)
             else:
                 if iline is None:
-                    msg = 'Unknown iline. vkms keyword is set indicating that a line channel map should be'\
-                          + 'calculated, but the iline keyword is not specified'
+                    msg = (
+                        "Unknown iline. vkms keyword is set indicating that a line channel map should be"
+                        + "calculated, but the iline keyword is not specified"
+                    )
                     raise ValueError(msg)
     else:
         if lambdarange is not None:
-            msg = 'Either lambdarange or wav should be set but not both'
+            msg = "Either lambdarange or wav should be set but not both"
             raise ValueError(msg)
 
     if lambdarange is not None:
         if len(lambdarange) != 2:
-            msg = 'lambdarange must have two and only two elements'
+            msg = "lambdarange must have two and only two elements"
             raise ValueError(msg)
 
     #
     # Kees' fix for the case when a locally compiled radmc3d exists in the current directory
     #
-    com = ''
-    if os.path.isfile('radmc3d'):
-        com = com + './'
-    com = com + 'radmc3d image'
+    com = ""
+    if os.path.isfile("radmc3d"):
+        com = com + "./"
+    com = com + "radmc3d image"
 
     # com = 'radmc3d image'
-    com = com + ' npix ' + str(int(npix))
-    com = com + ' incl ' + str(incl)
+    com = com + " npix " + str(int(npix))
+    com = com + " incl " + str(incl)
     if sizeau is not None:
-        com = com + ' sizeau ' + str(sizeau)
+        com = com + " sizeau " + str(sizeau)
 
     if wav is not None:
-        com = com + ' lambda ' + str(wav)
+        com = com + " lambda " + str(wav)
     elif (lambdarange is not None) & (nlam is not None):
-        com = com + ' lambdarange ' + str(lambdarange[0]) + ' ' + str(lambdarange[1]) + ' nlam ' + str(int(nlam))
+        com = (
+            com
+            + " lambdarange "
+            + str(lambdarange[0])
+            + " "
+            + str(lambdarange[1])
+            + " nlam "
+            + str(int(nlam))
+        )
     elif vkms is not None:
-        com = com + ' vkms ' + str(vkms)
+        com = com + " vkms " + str(vkms)
     elif (widthkms is not None) & (linenlam is not None):
-        com = com + ' widthkms ' + str(widthkms) + ' linenlam ' + str(linenlam)
+        com = com + " widthkms " + str(widthkms) + " linenlam " + str(linenlam)
 
     #
     # Now add additional optional keywords/arguments
     #
     if phi is not None:
-        com = com + ' phi ' + str(phi)
+        com = com + " phi " + str(phi)
 
     if posang is not None:
-        com = com + ' posang ' + str(posang)
+        com = com + " posang " + str(posang)
 
     if pointau is not None:
         if len(pointau) != 3:
-            msg = ' pointau should be a list of 3 elements corresponding to the  cartesian coordinates of the ' \
-                  + 'image center'
+            msg = (
+                " pointau should be a list of 3 elements corresponding to the  cartesian coordinates of the "
+                + "image center"
+            )
             raise ValueError(msg)
         else:
-            com = com + ' pointau ' + str(pointau[0]) + ' ' + str(pointau[1]) + ' ' + str(pointau[2])
+            com = (
+                com
+                + " pointau "
+                + str(pointau[0])
+                + " "
+                + str(pointau[1])
+                + " "
+                + str(pointau[2])
+            )
     else:
-        com = com + ' pointau 0.0  0.0  0.0'
+        com = com + " pointau 0.0  0.0  0.0"
 
     if fluxcons:
-        com = com + ' fluxcons'
+        com = com + " fluxcons"
 
     if iline:
-        com = com + ' iline ' + ("%d" % iline)
+        com = com + " iline " + ("%d" % iline)
 
     if stokes:
-        com = com + ' stokes'
+        com = com + " stokes"
 
     if binary:
-        com = com + ' imageunform'
+        com = com + " imageunform"
 
     if nostar:
-        com = com + ' nostar'
+        com = com + " nostar"
 
     if noscat:
-        com = com + ' noscat'
+        com = com + " noscat"
 
     if setthreads is not None:
-        com = com + ' setthreads {}'.format(setthreads)
+        com = com + " setthreads {}".format(setthreads)
 
     #
     # Print the command
@@ -1994,7 +2321,7 @@ def cmask(im=None, rad=0.0, au=False, arcsec=False, dpc=None):
 
     if au:
         if arcsec:
-            msg = ' Either au or arcsec should be set, but not both of them'
+            msg = " Either au or arcsec should be set, but not both of them"
             raise ValueError(msg)
 
         crad = rad * nc.au
@@ -2007,12 +2334,12 @@ def cmask(im=None, rad=0.0, au=False, arcsec=False, dpc=None):
     res = copy.deepcopy(im)
     if im.nfreq != 1:
         for ix in range(im.nx):
-            r = np.sqrt(im.y**2 + im.x[ix]**2)
+            r = np.sqrt(im.y**2 + im.x[ix] ** 2)
             ii = r <= crad
             res.image[ix, ii, :] = 0.0
     else:
         for ix in range(im.nx):
-            r = np.sqrt(im.y**2 + im.x[ix]**2)
+            r = np.sqrt(im.y**2 + im.x[ix] ** 2)
             ii = r <= crad
             res.image[ix, ii] = 0.0
 
@@ -2068,7 +2395,6 @@ class radmc3dCircimage(object):
     """
 
     def __init__(self):
-
         self.ri = np.zeros(0, dtype=np.float64)
         self.phii = np.zeros(0, dtype=np.float64)
         self.rc = np.zeros(0, dtype=np.float64)
@@ -2077,7 +2403,7 @@ class radmc3dCircimage(object):
         self.wav = np.zeros(0, dtype=np.float64)
         self.image = np.zeros((0, 0), dtype=np.float64)
         self.imageJyppix = np.zeros((0, 0), dtype=np.float64)
-        self.filename = 'circimage.out'
+        self.filename = "circimage.out"
         self.nphi = 0
         self.nwav = 0
         self.nfreq = 0
@@ -2099,7 +2425,7 @@ class radmc3dCircimage(object):
         nx, ny = self.image.shape[:2]
         psize = np.zeros([nx, ny], dtype=np.float64)
 
-        x2 = np.pi * (self.ri[1:]**2 - self.ri[:-1]**2)
+        x2 = np.pi * (self.ri[1:] ** 2 - self.ri[:-1] ** 2)
         dy = self.phii[1:] - self.phii[:-1]
 
         for ix in range(nx):
@@ -2107,7 +2433,7 @@ class radmc3dCircimage(object):
 
         return psize
 
-    def readImage(self, filename='circimage.out', old=False):
+    def readImage(self, filename="circimage.out", old=False):
         """
         Reads a circular image
 
@@ -2128,8 +2454,7 @@ class radmc3dCircimage(object):
             self.stokes = False
             self.npol = 1
 
-            with open(filename, 'r') as f:
-
+            with open(filename, "r") as f:
                 self.nfreq = int(f.readline())
                 self.nwav = self.nfreq
 
@@ -2172,7 +2497,9 @@ class radmc3dCircimage(object):
                     self.phii[ip] = float(s)
 
                 s = f.readline()
-                self.image = np.zeros((self.nr, self.nphi, self.npol, self.nfreq), dtype=np.float64)
+                self.image = np.zeros(
+                    (self.nr, self.nphi, self.npol, self.nfreq), dtype=np.float64
+                )
 
                 for inu in range(self.nfreq):
                     for ir in range(self.nr):
@@ -2182,13 +2509,13 @@ class radmc3dCircimage(object):
 
                 psize = self.getPixelSize()
                 conv = psize / (nc.pc**2) * 1e23
-                self.imageJyppix = np.zeros((self.nr, self.nphi, self.npol, self.nfreq), dtype=np.float64)
+                self.imageJyppix = np.zeros(
+                    (self.nr, self.nphi, self.npol, self.nfreq), dtype=np.float64
+                )
                 for inu in range(self.nfreq):
                     self.imageJyppix[:, :, 0, inu] = self.image[:, :, 0, inu] * conv
         else:
-
-            with open(filename, 'r') as f:
-
+            with open(filename, "r") as f:
                 iformat = int(f.readline())
                 if iformat == 1:
                     stokes = False
@@ -2236,7 +2563,9 @@ class radmc3dCircimage(object):
                     self.wav[inu] = nc.cc / self.freq[inu]
 
                 s = f.readline()
-                self.image = np.zeros((self.nr + 1, self.nphi, self.npol, self.nfreq), dtype=np.float64)
+                self.image = np.zeros(
+                    (self.nr + 1, self.nphi, self.npol, self.nfreq), dtype=np.float64
+                )
 
                 for inu in range(self.nfreq):
                     for iphi in range(self.nphi):
@@ -2250,13 +2579,17 @@ class radmc3dCircimage(object):
 
             psize = self.getPixelSize()
             conv = psize / (nc.pc**2) * 1e23
-            self.imageJyppix = np.zeros((self.nr + 1, self.nphi, self.npol, self.nfreq), dtype=np.float64)
+            self.imageJyppix = np.zeros(
+                (self.nr + 1, self.nphi, self.npol, self.nfreq), dtype=np.float64
+            )
             for ipol in range(self.npol):
                 for inu in range(self.nfreq):
-                    self.imageJyppix[:, :, ipol, inu] = self.image[:, :, ipol, inu] * conv
+                    self.imageJyppix[:, :, ipol, inu] = (
+                        self.image[:, :, ipol, inu] * conv
+                    )
 
 
-def readcircimage(filename='circimage.out', old=False):
+def readcircimage(filename="circimage.out", old=False):
     """
     A convenience function to read circular images
 

@@ -20,22 +20,24 @@ import os as os
 import glob as glob
 
 # Create file with all the batch submit commands
-f = open('submit_all.sh', 'w')
+f = open("submit_all.sh", "w")
 
 # Setup RADMC files
 output_dir = main_gizmo_carver()  # Call with inputs_gizmo_carver defaults
 print("Finished wrapper...", output_dir)
 
 # Change the current working directory
-os.chdir('/'+output_dir)
+os.chdir("/" + output_dir)
 
 # Check result
-subprocess.call("python /home1/00653/tg458122/gizmo_carver/src/check_radmc_input.py", shell=True)
+subprocess.call(
+    "python /home1/00653/tg458122/gizmo_carver/src/check_radmc_input.py", shell=True
+)
 
 # Change the current working directory
-os.chdir('../../')
+os.chdir("../../")
 
 # Add the submission command to a script
-f.write('sbatch %s/submit_radmc.sh'%output_dir)
+f.write("sbatch %s/submit_radmc.sh" % output_dir)
 
 f.close()
